@@ -60,7 +60,7 @@ class addQuestion(Frame):
 			for questionID in klist:
 				questionText = db[questionID].entQuestion
 				self.listQ.insert(END,questionText)
-				
+
 		self.listQ.selection_set(END)
 
 		self.listQ.config(width=70)
@@ -128,8 +128,8 @@ class addQuestion(Frame):
 		if strMsg =="":
 			with shelve.open('questiondb') as db:
 				if len(db) != 0:
-					previousID = max(key for key, value in db.iteritems())
-					questionID = previousID + 1
+					previousID = max(key for key, value in db.items())
+					questionID = int(previousID) + 1
 				else:
 					questionID = 1
 
@@ -141,6 +141,7 @@ class addQuestion(Frame):
 				db[newQuest.questionID] = newQuest
 			tkm.showinfo('Add Question', 'Question Added')
 			self.clearQuestion()
+			self.availableQuestions()
 
 
 		else:
