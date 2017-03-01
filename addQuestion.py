@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as tkm
 from Question import Question
+import shelve
 
 class addQuestion(Frame):
 	# GUI Setup 
@@ -54,8 +55,12 @@ class addQuestion(Frame):
 		scroll.grid(row=4,column=8,rowspan=4,sticky=W)
 
 		#this should pull questions from shelve file
-		for item in ['The stars in space are _________________.','The Milky Way is ________________.','']:
-			self.listQ.insert(END, item)
+		with shelve.open('questiondb') as db:
+			klist = list(db.keys())
+			for questionID in klist:
+				questionText = db[questionID].entQuestion
+				self.listQ.insert(END,questionText)
+				
 		self.listQ.selection_set(END)
 
 		self.listQ.config(width=70)
@@ -121,7 +126,6 @@ class addQuestion(Frame):
 			strMsg += "You have to provide at least 1 alternate answer. \n"
 		
 		if strMsg =="":
-			import shelve 
 			with shelve.open('questiondb') as db:
 				if len(db) != 0:
 					previousID = max(key for key, value in db.iteritems())
