@@ -1,7 +1,9 @@
 from tkinter import *
 import tkinter.messagebox as tkm
+import tkinter.filedialog as tkf
 from Question import Question
 import shelve
+import shutil
 
 class addQuestion(Frame):
 	# GUI Setup 
@@ -16,7 +18,7 @@ class addQuestion(Frame):
 		self.adminBtn()
 		self.availableQuestions()
 		self.textQandA()
-
+		self.questionImage()
 
 	def logo(self):
 		# Adds the university logo to the top left corner
@@ -147,9 +149,20 @@ class addQuestion(Frame):
 		else:
 			tkm.showwarning("Error",strMsg)
 
+	def getImagePath(self):
+		file_path = tkf.askopenfilename()
+		local_images = 'Images/'
+		if file_path != 0:
+			local_path = shutil.copy(file_path,local_images)
+			lblFile = Label(self,text=local_path, font=('Helvetica',8,'bold'))
+			lblFile.grid(row=11,column = 2,columnspan=4)
 
 	def questionImage(self):
-		pass
+		# add image to question button
+		btnImage = Button(self, text='Add Image', font=('Helvetica',8,'bold'))
+		btnImage.grid(row = 10, column = 3,columnspan=2)
+		btnImage['command'] = self.getImagePath
+
 
 	def submitButton(self):
 		pass
