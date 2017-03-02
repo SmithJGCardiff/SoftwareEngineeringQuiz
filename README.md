@@ -1,11 +1,16 @@
 ﻿# SoftwareEngineeringQuiz
 
 The add question page works, in the sense that you can add questions to a file
-things to do: \n
+
+Images are saved locally once question is saved, database of questions can be viewed in test.py
+
+scrollbar and spacing are not ideal, basic ui improvements needed
 
 
-1. add images
+things to do:
 
-2. sort out topics and category
+admin options page, so user can navigate back to it
 
-3. update list of questions so they pull the current questions from the file
+sort out topics and categories
+
+
