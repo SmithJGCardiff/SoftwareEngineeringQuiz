@@ -4,6 +4,7 @@ import tkinter.filedialog as tkf
 from Question import Question
 import shelve
 import shutil
+import os
 
 class addQuestion(Frame):
 	# GUI Setup 
@@ -117,6 +118,7 @@ class addQuestion(Frame):
 		self.entA1.delete(0,END)
 		self.entA3.delete(0,END)
 		self.entA2.delete(0,END)
+		self.clearImagePath()
 
 	def storeQuestion(self):
 		strMsg = ""
@@ -128,6 +130,8 @@ class addQuestion(Frame):
 			strMsg += "You have to provide at least 1 alternate answer. \n"
 		
 		if strMsg =="":
+			local_images = 'Images/'	
+			shutil.copy(self.file_path,local_images)
 			with shelve.open('questiondb') as db:
 				if len(db) != 0:
 					previousID = max(key for key, value in db.items())
@@ -143,6 +147,7 @@ class addQuestion(Frame):
 				db[newQuest.questionID] = newQuest
 			tkm.showinfo('Add Question', 'Question Added')
 			self.clearQuestion()
+			self.clearImagePath()
 			self.availableQuestions()
 
 
@@ -150,18 +155,31 @@ class addQuestion(Frame):
 			tkm.showwarning("Error",strMsg)
 
 	def getImagePath(self):
-		file_path = tkf.askopenfilename()
-		local_images = 'Images/'
-		if file_path != 0:
-			local_path = shutil.copy(file_path,local_images)
-			lblFile = Label(self,text=local_path, font=('Helvetica',8,'bold'))
-			lblFile.grid(row=11,column = 2,columnspan=4)
+		#Need to check it's an image in gif format, or convert it (PIL)
+		self.file_path = tkf.askopenfilename()
+		if self.file_path != 0:
+			file_name = os.path.basename(self.file_path)			
+			self.lblFile = Label(self,text=file_name, font=('Helvetica',8,'bold'))
+			self.lblFile.grid(row=11,column = 2,columnspan=2)
+
+			self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))
+			self.btnClearImage['command'] = self.clearImagePath
+			self.btnClearImage.grid(row =11, column=4)
 
 	def questionImage(self):
 		# add image to question button
 		btnImage = Button(self, text='Add Image', font=('Helvetica',8,'bold'))
-		btnImage.grid(row = 10, column = 3,columnspan=2)
+		btnImage.grid(row = 10, column = 2,columnspan=2)
 		btnImage['command'] = self.getImagePath
+
+
+	def clearImagePath(self):
+		self.file_path=''
+		try:
+			self.lblFile.grid_forget()
+			self.btnClearImage.grid_forget()
+		except AttributeError:
+			print("Image label and button haven't been created yet but it doesn't matter")
 
 
 	def submitButton(self):
