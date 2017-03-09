@@ -1,5 +1,5 @@
 from tkinter import *
-from AvailableQuestions import *
+# from AvailableQuestions import *
 import shelve
 
 class ViewEditQuestions(Frame):
@@ -118,7 +118,7 @@ class ViewEditQuestions(Frame):
         with shelve.open('questiondb') as db:
             klist = list(db.keys())
             for questionID in klist:
-                questionText = db[questionID].ent
+                questionText = db[questionID].entQuestion
                 self.listQ.insert(END,questionText)
 
 

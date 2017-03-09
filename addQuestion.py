@@ -9,6 +9,7 @@ import os
 class addQuestion(Frame):
 	# GUI Setup 
 
+
 	def __init__(self, master):
 		# initialise addQuestion class
 
@@ -23,13 +24,10 @@ class addQuestion(Frame):
 
 	def logo(self):
 		# Adds the university logo to the top left corner
-		logoCanvas = Canvas(self, width=150, height=149)
-		logoCanvas.grid(row=1, column=1, rowspan=2, sticky=NE)
-
-		self.logo = PhotoImage(file="Images/logo.gif")
-		self.logo = self.logo.zoom(15)
-		self.logo = self.logo.subsample(70)
-		logoCanvas.create_image(75,75,image=self.logo)
+		photo = PhotoImage(file="Images/logo.gif")
+		labelLogo = Label(self,image = photo)
+		labelLogo.image=photo
+		labelLogo.grid(row=1, column=1 )
 
 	def header(self):
 		# Category Name and Window title
@@ -48,14 +46,14 @@ class addQuestion(Frame):
 	def availableQuestions(self):
 
 		lblQ = Label(self, text='(Currently Available Questions)',font=('Helvetica',8,'bold'))
-		lblQ.grid(row=3, column=1, columnspan=2)
+		lblQ.grid(row=5, column=1, columnspan=2)
 
-		self.listQ = Listbox(self, height=3)
+		self.listQ = Listbox(self, height=6)
 		scroll = Scrollbar(self, command=self.listQ.yview)
 		self.listQ.configure(yscrollcommand=scroll.set)
 
 		self.listQ.grid(row=4, column=1, columnspan=8)
-		scroll.grid(row=4,column=8,rowspan=4,sticky=W)
+		scroll.grid(row=4,column=9,rowspan=4,sticky=W)
 
 		#this should pull questions from shelve file
 		with shelve.open('questiondb') as db:

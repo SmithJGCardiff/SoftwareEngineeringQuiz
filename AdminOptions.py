@@ -16,12 +16,10 @@ class AdminOptions(Frame):
         butLogout.grid(row=0, column=5, columnspan=2, sticky = NE, padx=5, pady=0)
         
         ## create logo
-        logoCanvas = Canvas(self, width=100, height=100)
-        logoCanvas.grid(row=0, column=0, rowspan=1, columnspan=1, padx=10, pady=5, sticky= EW)
-        self.logo = PhotoImage(file="Images/logo.gif")
-        ##self.logo = self.logo.zoom(20)
-        ##self.logo = self.logo.subsample(2)
-        logoCanvas.create_image(0,0,image=self.logo,anchor=CENTER) 
+        photo = PhotoImage(file="Images/logo.gif")
+        labelLogo = Label(self,image = photo)
+        labelLogo.image=photo
+        labelLogo.grid(row=0, column=0 )
 
         ##sets title
         lblAdminOptions = Label(self, text = "Admin Options  ", font=("MS", 14, "bold"))
