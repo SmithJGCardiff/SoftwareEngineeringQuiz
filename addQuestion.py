@@ -102,6 +102,8 @@ class addQuestion(Frame):
 		self.entA3.grid(row=6,column=1,columnspan=2)
 
 		btnSubmit = Button(self, text='Save Question', font=('Helvetica',8,'bold'))
+		# need file path
+		self.file_path = ''
 		btnSubmit['command'] = self.storeQuestion
 		btnSubmit.grid(row=10,column=6,columnspan=2)
 
@@ -128,20 +130,28 @@ class addQuestion(Frame):
 			strMsg += "You have to provide at least 1 alternate answer. \n"
 		
 		if strMsg =="":
-			local_images = 'Images/'	
-			shutil.copy(self.file_path,local_images)
-			with shelve.open('questiondb') as db:
-				if len(db) != 0:
-					previousID = max(key for key, value in db.items())
-					questionID = int(previousID) + 1
+			if self.file_path != '':	
+				local_images = 'Images/'	
+				shutil.copy(self.file_path,local_images)
+
+			with open('IDList.txt','ab+') as f:
+				fileStr = ''
+				if f.tell() < 4:
+					questionID = 1001 
 				else:
-					questionID = 1
+					f.seek(-4,2)
+					questionID = int(f.read()) + 1
+					fileStr += '\n'
+				f.write((str(questionID)).encode('utf-8'))
+
+
+			with shelve.open('questiondb') as db:
 
 				newQuest = Question(str(questionID),
 					'','include topics here',self.entQuestion.get(),
 					self.entAnswer.get(),self.entA1.get(),
 					self.entA2.get(),self.entA3.get(),
-					'')
+					self.file_path)
 				db[newQuest.questionID] = newQuest
 			tkm.showinfo('Add Question', 'Question Added')
 			self.clearQuestion()
@@ -190,7 +200,7 @@ root = Tk()
 Grid.rowconfigure(root, 0, weight=1)
 Grid.columnconfigure(root, 0, weight=1)
 
-root.title("View/Edit Questions")
+root.title("Add Questions")
 root.configure(background="gray80")
 addQ = addQuestion(root)
 root.mainloop()
