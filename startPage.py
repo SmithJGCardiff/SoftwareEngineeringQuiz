@@ -3,12 +3,14 @@ import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
 from lib import *
 import random
-import loginWindow
+from loginWindow import loginWindow
+from lib.loginDetails import loginDetails
 class startPage(Frame):
 
 	def __init__(self,master):
 
-		Frame.__init__(self,master)
+		Frame.__init__(self, master)
+		self.master = master
 		self.grid()
 		self.logo()
 		self.header()
@@ -31,14 +33,19 @@ class startPage(Frame):
 		lblWelcome.grid(row=1, column=2, columnspan=2, sticky=W)
 
 	def passToAdmin(self):
+		self.loginBox = Toplevel(self.master)
+		self.loginBox.title = 'Login'
+		self.stPage = loginWindow(self.loginBox)
+
+
 		
 
 	def adminBtn(self):
 		# Admin Options
-		adminButton = Button(self, text='Admin Options',font=('Helvetica',16),command = self.callback)
+		adminButton = Button(self, text='Admin Options',font=('Helvetica',16))
 		## Need to add in command for admin button here
 		adminButton.grid(row=1, column=7, columnspan=1, sticky=W )
-		adminButton['command'] = print('clicked')
+		adminButton['command'] = self.passToAdmin
 
 
 
@@ -79,5 +86,10 @@ class startPage(Frame):
 			foreground = 'grey',
 			cursor = 'cross')
 		btnStartQuiz.grid(row = 7, column = 3, columnspan = 4)
+def main():
+	root = Tk()
+	stPage = startPage(root)
+	root.mainloop()
 
-
+if __name__ == "__main__":
+	main()

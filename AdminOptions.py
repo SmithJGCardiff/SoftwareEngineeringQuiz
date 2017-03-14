@@ -105,12 +105,11 @@ class AdminOptions(Frame):
         
 
        
+def main():
+    root = Tk()  # call the Tk method
+    root.title("Admin Options") # set the title
+    app= AdminOptions(root)    # creates a new instance of the AdminOptions class
+    root.mainloop()  # starts window with mainloop method
 
-		
-                        
-
-#main
-root = Tk()  # call the Tk method
-root.title("Admin Options") # set the title
-app= AdminOptions(root)    # creates a new instance of the AdminOptions class
-root.mainloop()  # starts window with mainloop method
+if __name__ == "__main__":
+    main()
