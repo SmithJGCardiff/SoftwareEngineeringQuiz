@@ -1,14 +1,8 @@
-import time
+
 from lib.loginDetails import loginDetails
 from tkinter import *
 import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
-from Question import Question
-import shelve
-import shutil
-import os
-import AdminOptions
-
 
 class loginWindow(Frame):
 
@@ -62,6 +56,7 @@ class loginWindow(Frame):
 		if strLogAttempt == "login successful":
 
 			self.master.master.destroy()
+			import AdminOptions
 			AdminOptions.main()
 			
 
