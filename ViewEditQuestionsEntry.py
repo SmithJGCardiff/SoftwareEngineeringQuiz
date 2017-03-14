@@ -1,5 +1,5 @@
 from tkinter import *
-from AvailableQuestions import *
+from Question import Question
 import shelve
 from Question import *
 import tkinter.messagebox as tkm
@@ -19,7 +19,7 @@ class ViewEditQuestions(Frame):
         photo = PhotoImage(file="Images/logo.gif")
         labelLogo = Label(self,image = photo)
         labelLogo.image=photo
-        labelLogo.grid(row=0, column=0 )
+        labelLogo.grid(row=0, column=0, rowspan =2 )
 
         ## create AdminOptions button
 
@@ -29,11 +29,11 @@ class ViewEditQuestions(Frame):
 
         ##sets Category title
         lblCategory = Label(self, text = "Category  ", font=("MS", 12, "bold"))    ### Needs coding
-        lblCategory.grid(row = 1, column = 0, columnspan = 6, sticky = W, padx=10, pady=5)
+        lblCategory.grid(row = 0, column = 1, columnspan = 6, sticky = SW, padx=10, pady=5)
 
         ##sets title
         lblViewEditQuestions = Label(self, text = "View / Edit Questions  ", font=("MS", 14, "bold"))
-        lblViewEditQuestions.grid(row = 2, column = 0, columnspan = 6, sticky = W, padx=10, pady=5)
+        lblViewEditQuestions.grid(row = 1, column = 1, columnspan = 6, sticky = NW, padx=10, pady=5)
 
         # sets currently available label
         lblCurrentlyAvailable = Label(self, text = "(Select From Currently Available Questions)  ", font=("MS", 8, "bold"))
@@ -49,10 +49,6 @@ class ViewEditQuestions(Frame):
         self.listQ.grid(row=4, column=0, columnspan=9, sticky=EW, padx=(10,0), pady=5)
         scroll.grid(row=4,column=9,sticky="nsw", rowspan=6)
 
-        #inserts required values into listbox inc. empty string at end
-        #Need to be added from file input
-        for item in ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8",""]:
-            self.listQ.insert(END,item)
 
         #create a labelframe to group q and a
 
