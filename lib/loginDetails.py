@@ -3,6 +3,7 @@ class loginDetails:
 	def __init__(self, iUsername = '', iPassword = ''):
 		self.username = iUsername
 		self.password = iPassword
+		self.check = check
 
 	def addUserCommandLine():
 		newUser = input('User: ')

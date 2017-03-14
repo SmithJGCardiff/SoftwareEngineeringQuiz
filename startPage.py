@@ -34,6 +34,7 @@ class startPage(Frame):
 
 	def passToAdmin(self):
 		self.loginBox = Toplevel(self.master)
+		self.loginBox.grab_set()
 		self.loginBox.title = 'Login'
 		self.stPage = loginWindow(self.loginBox)
 

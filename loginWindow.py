@@ -14,6 +14,7 @@ class loginWindow(Frame):
 		self.logo()
 		self.loginInput()
 		self.master.bind("<Return>", self.enterLogin)
+		self.transient(self.master)
 
 
 		

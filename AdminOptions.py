@@ -1,18 +1,27 @@
 from tkinter import *
-
+from lib.loginDetails import loginDetails
+import startPage
+import shelve
+from Category import Category
+import os
 
 class AdminOptions(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
+        self.master = master
         self.grid()
         self.createAdminOptions()
+        self.getAvailableCategories()
+        self.addNewCat()
+        self.finalButts()
+        self.addQuestionsBtn()
         
     def createAdminOptions(self):
 
         ## create logout button
         
         butLogout = Button(self, text = "Logout", font=("MS", 8, "bold"), height=1, width = 10)
-        ##butLogout["command"]=self.logout  ## look
+        butLogout["command"]=self.logout  ## look
         butLogout.grid(row=0, column=5, columnspan=2, sticky = NE, padx=5, pady=0)
         
         ## create logo
@@ -36,6 +45,8 @@ class AdminOptions(Frame):
        
         #sets up category choice label
         
+
+        
         lblCategories = Label(self, text="Select a Category: ", font=('MS', 8, 'bold'))
         lblCategories.grid(row=6, column=2, columnspan=3, sticky=W, padx=10, pady=2)
 
@@ -44,6 +55,11 @@ class AdminOptions(Frame):
         #will want to read and clear value so use self before name to make it available
         #later in the program
         
+        
+
+        #inserts required values into listbox inc. empty string at end
+        #Need to be added from file input
+    def getAvailableCategories(self):
         self.listCategories = Listbox(self,height=5)
         scroll = Scrollbar(self, command= self.listCategories.yview)
         self.listCategories.configure(yscrollcommand=scroll.set)
@@ -53,28 +69,29 @@ class AdminOptions(Frame):
         self.listCategories.grid(row=7, column=2, columnspan=3, sticky=EW)
         scroll.grid(row=7,column=4,sticky=NS, rowspan=5)
 
-        #inserts required values into listbox inc. empty string at end
-        #Need to be added from file input
-        for item in ["Cat1", "Cat2", "Cat3", "Cat4", "Cat5", ""]:
+        self.catList = Category.getList()
+        print(self.catList)
+        for item in self.catList:
             self.listCategories.insert(END,item)
 
         #create label for add category text box
-
+    def addNewCat(self):
         lblAddNewCategory = Label(self, text = "Add a New Category:  ", font=("MS", 8, "bold"))
         lblAddNewCategory.grid(row = 4, column = 2, columnspan = 2, sticky = W, padx=10, pady=2)
         
         ##inserts a text box for adding a new category
 
-        self.txtAddNewCategory = Text(self, height = 1, width = 25)
+        self.txtAddNewCategory = Entry(self, width = 25)
         self.txtAddNewCategory.grid(row =  5, column = 2, columnspan = 3, sticky = EW, padx=10, pady=2)
 
         ##inserts add button
         butAddCategory = Button(self, text = "Add", font=("MS", 8, "bold"),height=1, width = 10,fg="white", bg="blue")
-        ##butAddCategory["command"]=AddQuestions.AddCategory() ## look
+        butAddCategory["command"]=self.addCategories
+        print(self.txtAddNewCategory.get()) ## look
         butAddCategory.grid(row=5, column=4, columnspan=1, padx=10, pady=2)
 
         ##inserts use category and start quiz button
-        
+    def finalButts(self):
         butStartQuiz = Button(self, text = "Use category and start quiz", font=("MS", 8, "bold"),height=2, width = 25,fg="white", bg="blue")
         ##butStartQuiz["command"]=TakeQuiz.StartQuiz() ## look
         butStartQuiz.grid(row=12, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
@@ -83,14 +100,7 @@ class AdminOptions(Frame):
 
         lblForSelectedCategory = Label(self, text = "For Selected Category:  ", font=("MS", 8, "bold"),height=2, width = 25)
         lblForSelectedCategory.grid(row = 16, column = 2, columnspan = 3, sticky = EW, padx=10, pady=2)
-
         
-        ##inserts add edit delete buttons
-        
-        butAddQuestions = Button(self, text = "Add Questions", font=("MS", 8, "bold"),height=2, width = 25)
-        ##butAddQuestions["command"]=AddQuestions.AddQuestions() ## look
-        butAddQuestions.grid(row=17, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
-
         butViewEditQuestions = Button(self, text = "View / Edit Questions", font=("MS", 8, "bold"),height=2, width = 25)
         ##butViewEditQuestions["command"]=EditQuestions.EditQuestions() ## look
         butViewEditQuestions.grid(row=18, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
@@ -103,7 +113,26 @@ class AdminOptions(Frame):
         ##butDeleteCateory["command"]=DeleteQuestions.DeleteCategory()
         butDeleteCategory.grid(row=20, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
         
+        
+        ##inserts add edit delete buttons
+    def addQuestionsBtn(self):
+        butAddQuestions = Button(self, text = "Add Questions", font=("MS", 8, "bold"),height=2, width = 25)
+        ##butAddQuestions["command"]=AddQuestions.AddQuestions() ## look
+        butAddQuestions.grid(row=17, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
 
+
+    def launchAddQuests(self):
+        #get the current value of categories and pass it to addQuestions
+        
+
+    def addCategories(self):
+        Category.addCategory(self.txtAddNewCategory.get())
+        self.txtAddNewCategory.delete(0,'end')
+        self.getAvailableCategories()
+
+    def logout(self):
+        self.master.destroy()
+        startPage.main()
        
 def main():
     root = Tk()  # call the Tk method
