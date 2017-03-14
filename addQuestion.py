@@ -1,3 +1,4 @@
+
 from tkinter import *
 import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
@@ -41,7 +42,7 @@ class addQuestion(Frame):
 		# Admin Options
 		adminButton = Button(self, text='Admin Options',font=('Helvetica',16))
 		## Need to add in command for admin button here
-		adminButton.grid(row=1, column=7, columnspan=2, sticky=W)
+		adminButton.grid(row=1, column=7, columnspan=1, sticky=W)
 
 	def availableQuestions(self):
 
@@ -145,7 +146,7 @@ class addQuestion(Frame):
 				f.write((str(questionID)).encode('utf-8'))
 
 
-			with shelve.open('questiondb') as db:
+			with shelve.open('questiondb','c') as db:
 
 				newQuest = Question(str(questionID),
 					'','include topics here',self.entQuestion.get(),
@@ -197,8 +198,7 @@ class addQuestion(Frame):
 
 # Main
 root = Tk()
-Grid.rowconfigure(root, 0, weight=1)
-Grid.columnconfigure(root, 0, weight=1)
+
 
 root.title("Add Questions")
 root.configure(background="gray80")
