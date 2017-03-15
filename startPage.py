@@ -33,10 +33,10 @@ class startPage(Frame):
 		lblWelcome.grid(row=1, column=2, columnspan=2, sticky=W)
 
 	def passToAdmin(self):
-		self.loginBox = Toplevel(self.master)
-		self.loginBox.grab_set()
-		self.loginBox.title = 'Login'
-		self.stPage = loginWindow(self.loginBox)
+		loginBox = Toplevel(self.master)
+		loginBox.grab_set()
+		loginBox.title('Login')
+		loginWindow(loginBox)
 
 
 		
@@ -54,7 +54,7 @@ class startPage(Frame):
 
 		with open('facts.txt','r') as f:
 			num_of_lines = int(f.readline())
-			intR = random.randint(1,num_of_lines)
+			intR = random.randint(1,num_of_lines-1)
 			for i, line in enumerate(f):
 				if i == intR:
 					strFact = line
@@ -89,6 +89,16 @@ class startPage(Frame):
 		btnStartQuiz.grid(row = 7, column = 3, columnspan = 4)
 def main():
 	root = Tk()
+	# w= 700
+	# h = 480
+	# ws = root.winfo_screenwidth()
+	# hs = root.winfo_screenheight()
+	
+	# x = (ws/2) - (w/2)
+	# y = (hs/2) - (h/2)
+
+	# root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+	root.title('Quiz')
 	stPage = startPage(root)
 	root.mainloop()
 

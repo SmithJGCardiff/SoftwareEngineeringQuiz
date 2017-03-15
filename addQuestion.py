@@ -11,11 +11,13 @@ class addQuestion(Frame):
 	# GUI Setup 
 
 
-	def __init__(self, master):
+	def __init__(self, master, selCat = ""):
 		# initialise addQuestion class
+		self.selectedCat = selCat
+
 
 		Frame.__init__(self, master)
-		self.grid(row=0, column=0, sticky=N+S+E+W)
+		self.grid()
 		self.logo()
 		self.header()
 		self.adminBtn()
@@ -24,25 +26,25 @@ class addQuestion(Frame):
 		self.questionImage()
 
 	def logo(self):
-		# Adds the university logo to the top left corner
+        ## create logo
 		photo = PhotoImage(file="Images/logo.gif")
 		labelLogo = Label(self,image = photo)
 		labelLogo.image=photo
-		labelLogo.grid(row=1, column=1 )
+		labelLogo.grid(row=0, column=0, rowspan =2 )
 
 	def header(self):
 		# Category Name and Window title
 		lblHeader = Label(self, text='Add Questions', font=('Helvetica',32))
-		lblHeader.grid(row=2, column=2, columnspan=2, sticky=NW)
+		lblHeader.grid(row=1, column=1, columnspan=2, sticky=NW)
 
 		lblCatHeader = Label(self, text='Category Name', font=('Helvetica',16))
-		lblCatHeader.grid(row=1, column=2, columnspan=2, sticky=SW)
+		lblCatHeader.grid(row=0, column=1, columnspan=2, sticky=SW)
 
 	def adminBtn(self):
 		# Admin Options
 		adminButton = Button(self, text='Admin Options',font=('Helvetica',16))
 		## Need to add in command for admin button here
-		adminButton.grid(row=1, column=7, columnspan=1, sticky=W)
+		adminButton.grid(row=0, column=7, columnspan=1, sticky=W)
 
 	def availableQuestions(self):
 
@@ -60,9 +62,11 @@ class addQuestion(Frame):
 		with shelve.open('questiondb') as db:
 			klist = list(db.keys())
 			for questionID in klist:
-				questionText = db[questionID].entQuestion
-				self.listQ.insert(END,questionText)
+				if db[questionID].category == self.selectedCat:
+					questionText = db[questionID].entQuestion
+					self.listQ.insert(END,questionText)
 
+		# self.listQ.insert(END,0)
 		self.listQ.selection_set(END)
 
 		self.listQ.config(width=70)
@@ -149,12 +153,12 @@ class addQuestion(Frame):
 			with shelve.open('questiondb','c') as db:
 
 				newQuest = Question(str(questionID),
-					'','include topics here',self.entQuestion.get(),
+					self.selectedCat,'include topics here',self.entQuestion.get(),
 					self.entAnswer.get(),self.entA1.get(),
 					self.entA2.get(),self.entA3.get(),
 					self.file_path)
 				db[newQuest.questionID] = newQuest
-			tkm.showinfo('Add Question', 'Question Added')
+			tkm.showinfo('Add Question', 'Question Added', parent = self.master)
 			self.clearQuestion()
 			self.clearImagePath()
 			self.availableQuestions()
@@ -194,14 +198,13 @@ class addQuestion(Frame):
 	def submitButton(self):
 		pass
 
+	def main():
+		root = Tk()
+		root.title("Add Question")
+		addQ = addQuestion(root)
+		root.mainloop()
 
 
 # Main
-
-root = Tk()
-
-
-root.title("Add Questions")
-root.configure(background="gray80")
-addQ = addQuestion(root)
-root.mainloop()
+if __name__ == "__main__":
+	main()

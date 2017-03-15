@@ -4,6 +4,7 @@ import startPage
 import shelve
 from Category import Category
 import os
+import tkinter.messagebox as tkm
 
 class AdminOptions(Frame):
     def __init__(self, master):
@@ -73,9 +74,12 @@ class AdminOptions(Frame):
         print(self.catList)
         for item in self.catList:
             self.listCategories.insert(END,item)
+        self.listCategories.insert(END,'')
+        self.listCategories.selection_set(END)
 
         #create label for add category text box
     def addNewCat(self):
+
         lblAddNewCategory = Label(self, text = "Add a New Category:  ", font=("MS", 8, "bold"))
         lblAddNewCategory.grid(row = 4, column = 2, columnspan = 2, sticky = W, padx=10, pady=2)
         
@@ -91,6 +95,35 @@ class AdminOptions(Frame):
         butAddCategory.grid(row=5, column=4, columnspan=1, padx=10, pady=2)
 
         ##inserts use category and start quiz button
+
+    def addCategories(self):
+        newCat = self.txtAddNewCategory.get()
+        if newCat != '':
+
+            Category.addCategory()
+            self.txtAddNewCategory.delete(0,'end')
+            self.getAvailableCategories()
+        else:
+            tkm.showerror('Error','Enter a category name first')
+
+    def addQuestionsBtn(self):
+        butAddQuestions = Button(self, text = "Add Questions", font=("MS", 8, "bold"),height=2, width = 25)
+        butAddQuestions["command"]= self.launchAddQuests ## look
+        butAddQuestions.grid(row=17, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
+
+    def launchAddQuests(self):
+        #get the current value of categories and pass it to addQuestions
+        currentSelection = self.listCategories.curselection()
+        selectedCategory = self.listCategories.get(currentSelection)
+        self.listCategories.selection_clear(currentSelection)
+        addQuestWithCat = Toplevel(self.master)
+        addQuestWithCat.grab_set()
+        addQuestWithCat.title('Add Questions')
+        import addQuestion
+        addQuestion.addQuestion(addQuestWithCat,selectedCategory)
+
+
+    
     def finalButts(self):
         butStartQuiz = Button(self, text = "Use category and start quiz", font=("MS", 8, "bold"),height=2, width = 25,fg="white", bg="blue")
         ##butStartQuiz["command"]=TakeQuiz.StartQuiz() ## look
@@ -113,22 +146,13 @@ class AdminOptions(Frame):
         ##butDeleteCateory["command"]=DeleteQuestions.DeleteCategory()
         butDeleteCategory.grid(row=20, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
         
-        
-        ##inserts add edit delete buttons
-    def addQuestionsBtn(self):
-        butAddQuestions = Button(self, text = "Add Questions", font=("MS", 8, "bold"),height=2, width = 25)
-        ##butAddQuestions["command"]=AddQuestions.AddQuestions() ## look
-        butAddQuestions.grid(row=17, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
-
-
-    def launchAddQuests(self):
-        #get the current value of categories and pass it to addQuestions
-        
-
-    def addCategories(self):
-        Category.addCategory(self.txtAddNewCategory.get())
-        self.txtAddNewCategory.delete(0,'end')
-        self.getAvailableCategories()
+    def deleteCategory(self):
+        # here delete category from list,
+        # also open up questiondb and delete every question with category
+        with shelve.open('categorydb','w') as db:
+            categories = db['cats']
+            
+        pass
 
     def logout(self):
         self.master.destroy()

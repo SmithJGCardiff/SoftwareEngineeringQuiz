@@ -14,7 +14,8 @@ class loginWindow(Frame):
 		self.logo()
 		self.loginInput()
 		self.master.bind("<Return>", self.enterLogin)
-		self.transient(self.master)
+		self.entUsername.focus_set()
+
 
 
 		
@@ -59,6 +60,8 @@ class loginWindow(Frame):
 			self.master.master.destroy()
 			import AdminOptions
 			AdminOptions.main()
+		else:
+			tkm.showerror('Login Denied',strLogAttempt)
 			
 
 
