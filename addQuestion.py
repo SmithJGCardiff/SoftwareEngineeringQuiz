@@ -65,6 +65,9 @@ class addQuestion(Frame):
 				if db[questionID].category == self.selectedCat:
 					questionText = db[questionID].entQuestion
 					self.listQ.insert(END,questionText)
+				elif __name__ == "__main__":
+					questionText = db[questionID].entQuestion
+					self.listQ.insert(END,questionText)			
 
 		# self.listQ.insert(END,0)
 		self.listQ.selection_set(END)
@@ -144,10 +147,11 @@ class addQuestion(Frame):
 				if f.tell() < 4:
 					questionID = 1001 
 				else:
-					f.seek(-4,2)
+					f.seek(-5,2)
 					questionID = int(f.read()) + 1
-					fileStr += '\n'
-				f.write((str(questionID)).encode('utf-8'))
+				fileStr += str(questionID) + '\n'
+				
+				f.write((fileStr).encode('utf-8'))
 
 
 			with shelve.open('questiondb','c') as db:
@@ -198,11 +202,11 @@ class addQuestion(Frame):
 	def submitButton(self):
 		pass
 
-	def main():
-		root = Tk()
-		root.title("Add Question")
-		addQ = addQuestion(root)
-		root.mainloop()
+def main():
+	root = Tk()
+	root.title("Add Question")
+	addQ = addQuestion(root)
+	root.mainloop()
 
 
 # Main
