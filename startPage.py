@@ -5,11 +5,13 @@ from lib import *
 import random
 from loginWindow import loginWindow
 from lib.loginDetails import loginDetails
+from lib.schoolDetails import schoolDetails
 class startPage(Frame):
 
 	def __init__(self,master, selCat= ""):
 
 		Frame.__init__(self, master)
+		self.selectedCategory = selCat
 		self.master = master
 		self.grid()
 		self.logo()
@@ -87,7 +89,24 @@ class startPage(Frame):
 			foreground = 'grey',
 			cursor = 'cross')
 		btnStartQuiz.grid(row = 7, column = 3, columnspan = 4)
-def main():
+		btnStartQuiz["command"] = self.launchSchoolDetails
+
+	def launchSchoolDetails(self):
+		schoolBox = Toplevel(self.master)
+		schoolBox.grab_set()
+		schoolBox.title('School Details')
+
+		schoolName = schoolDetails(schoolBox)
+		schoolBox.wait_window()
+		# now store school name
+		print(str(schoolName))
+		self.master.destroy()
+		import mainQuizWindow
+		mainQuizWindow.main(self.selectedCategory)
+
+
+
+def main(selCat= "Sports"):
 	root = Tk()
 	# w= 700
 	# h = 480
@@ -99,7 +118,7 @@ def main():
 
 	# root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 	root.title('Quiz')
-	stPage = startPage(root)
+	stPage = startPage(root,selCat)
 	root.mainloop()
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ class addQuestToCat(Frame):
 		lblLeft = Label(self, text='(Currently Available Questions)',font=('Helvetica',8,'bold'))
 		lblLeft.grid(row=4, column=1, columnspan=2)
 
-		self.listLeft = Listbox(self, height=20, selectmode = MULTIPLE)
+		self.listLeft = Listbox(self, height=20, selectmode = EXTENDED)
 		scroll = Scrollbar(self, command=self.listLeft.yview)
 		self.listLeft.configure(yscrollcommand=scroll.set)
 
@@ -74,7 +74,7 @@ class addQuestToCat(Frame):
 		lblRight = Label(self, text='(Questions currently in Category)',font=('Helvetica',8,'bold'))
 		lblRight.grid(row=4, column=6, columnspan=2)
 
-		self.listRight = Listbox(self, height=20, selectmode = MULTIPLE)
+		self.listRight = Listbox(self, height=20, selectmode = EXTENDED)
 		scroll = Scrollbar(self, command=self.listRight.yview)
 		self.listRight.configure(yscrollcommand=scroll.set)
 

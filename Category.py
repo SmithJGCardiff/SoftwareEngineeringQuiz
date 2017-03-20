@@ -26,7 +26,7 @@ class Category:
 			categories.remove(catDel)
 			db['cats'] = categories
 
-		with shelve.open('questiondb',writeback =True) as db:
+		with shelve.open('questiondb','w',writeback =True) as db:
 			for questionID in db.keys():
 				if catDel in db[questionID].category:
 
@@ -36,3 +36,11 @@ class Category:
 					print('inCategoryafterReplaceis' + tStr)
 					db[questionID].category = tStr
 
+	def questionCount(catCount):
+		count = 0
+		with shelve.open('questiondb','r') as db:
+			for questionID in db.keys():
+				if catCount in db[questionID].category:
+					count+=1
+					
+		return count

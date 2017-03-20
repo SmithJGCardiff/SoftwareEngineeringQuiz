@@ -17,6 +17,8 @@ class AdminOptions(Frame):
         self.finalButts()
         self.addQuestionsBtn()
         self.addQsToCat()
+        self.master.bind("<Return>",self.addCategories)
+        self.txtAddNewCategory.focus_set()
         
     def createAdminOptions(self):
 
@@ -62,14 +64,14 @@ class AdminOptions(Frame):
         #inserts required values into listbox inc. empty string at end
         #Need to be added from file input
     def getAvailableCategories(self):
-        self.listCategories = Listbox(self,height=5)
+        self.listCategories = Listbox(self,height=5,exportselection=0)
         scroll = Scrollbar(self, command= self.listCategories.yview)
         self.listCategories.configure(yscrollcommand=scroll.set)
 
         #Placed list box next to label and scroll bar after.  Listbox and scrollbar aligned
         #to be next to one another
         self.listCategories.grid(row=7, column=2, columnspan=3, sticky=EW)
-        scroll.grid(row=7,column=4,sticky=NS, rowspan=5)
+        scroll.grid(row=7,column=5,sticky=NS+W, rowspan=5)
 
         self.catList = Category.getList()
         print(self.catList)
@@ -77,6 +79,7 @@ class AdminOptions(Frame):
             self.listCategories.insert(END,item)
 
         self.listCategories.selection_set(END)
+        self.listCategories.bind('<<ListboxSelect>>', self.setButtonState)
 
         #create label for add category text box
     def addNewCat(self):
@@ -97,7 +100,7 @@ class AdminOptions(Frame):
 
         ##inserts use category and start quiz button
 
-    def addCategories(self):
+    def addCategories(self,e):
         newCat = self.txtAddNewCategory.get()
         if newCat != '':
 
@@ -126,9 +129,10 @@ class AdminOptions(Frame):
 
     
     def finalButts(self):
-        butStartQuiz = Button(self, text = "Use category and start quiz", font=("MS", 8, "bold"),height=2, width = 25,fg="white", bg="blue")
+        self.btnStartQuiz = Button(self, text = "Use category and start quiz \n (10 question min.)", font=("MS", 8, "bold"),height = 4, width = 25,fg="white", bg="blue")
         ##butStartQuiz["command"]=TakeQuiz.StartQuiz() ## look
-        butStartQuiz.grid(row=12, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
+        self.btnStartQuiz["state"] = "disabled"
+        self.btnStartQuiz.grid(row=12, column=2, columnspan=3, rowspan =2, sticky = EW, padx=10, pady=2)
 
         #create label for category actions
 
@@ -141,6 +145,27 @@ class AdminOptions(Frame):
         butDeleteQuestions = Button(self, text = "Delete Questions", font=("MS", 8, "bold"),height=2, width = 25)
         ##butDeleteQuestions["command"]=DeleteQuestions.DeleteQuestions() ## look
         butDeleteQuestions.grid(row=19, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
+
+    def launchQuiz(self):
+        selectedCat = self.listCategories.get(self.listCategories.curselection()[0])
+        import startPage
+        self.master.destroy()
+        startPage.main(selectedCat)
+
+
+    def setButtonState(self,e):
+        selectedCat = self.listCategories.get(self.listCategories.curselection()[0])
+        print(selectedCat)
+        numOfQs = Category.questionCount(selectedCat)
+        if (numOfQs < 10 and (self.btnStartQuiz["state"] == "normal")):
+            self.btnStartQuiz["state"] = "disabled"
+            print('disabled')
+        elif (numOfQs == 10 and (self.btnStartQuiz["state"] == "disabled")):
+            self.btnStartQuiz["state"] = "normal"
+            print('normal')
+            print(numOfQs)
+            print(self.btnStartQuiz["state"])
+        print(numOfQs)
 
     def launchAddQsToCat(self):
         currentSelection = self.listCategories.curselection()
