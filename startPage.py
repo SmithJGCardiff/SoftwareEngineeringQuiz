@@ -7,7 +7,7 @@ from loginWindow import loginWindow
 from lib.loginDetails import loginDetails
 class startPage(Frame):
 
-	def __init__(self,master):
+	def __init__(self,master, selCat= ""):
 
 		Frame.__init__(self, master)
 		self.master = master

@@ -16,6 +16,7 @@ class AdminOptions(Frame):
         self.addNewCat()
         self.finalButts()
         self.addQuestionsBtn()
+        self.addQsToCat()
         
     def createAdminOptions(self):
 
@@ -74,7 +75,7 @@ class AdminOptions(Frame):
         print(self.catList)
         for item in self.catList:
             self.listCategories.insert(END,item)
-        self.listCategories.insert(END,'')
+
         self.listCategories.selection_set(END)
 
         #create label for add category text box
@@ -100,27 +101,27 @@ class AdminOptions(Frame):
         newCat = self.txtAddNewCategory.get()
         if newCat != '':
 
-            Category.addCategory()
+            Category.addCategory(newCat)
             self.txtAddNewCategory.delete(0,'end')
             self.getAvailableCategories()
         else:
             tkm.showerror('Error','Enter a category name first')
 
     def addQuestionsBtn(self):
-        butAddQuestions = Button(self, text = "Add Questions", font=("MS", 8, "bold"),height=2, width = 25)
+        butAddQuestions = Button(self, text = "Create Questions", font=("MS", 8, "bold"),height=2, width = 25)
         butAddQuestions["command"]= self.launchAddQuests ## look
         butAddQuestions.grid(row=17, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
 
     def launchAddQuests(self):
         #get the current value of categories and pass it to addQuestions
-        currentSelection = self.listCategories.curselection()
-        selectedCategory = self.listCategories.get(currentSelection)
-        self.listCategories.selection_clear(currentSelection)
-        addQuestWithCat = Toplevel(self.master)
-        addQuestWithCat.grab_set()
-        addQuestWithCat.title('Add Questions')
+        # currentSelection = self.listCategories.curselection()
+        # selectedCategory = self.listCategories.get(currentSelection)
+        # self.listCategories.selection_clear(currentSelection)
+        createQuest = Toplevel(self.master)
+        createQuest.grab_set()
+        createQuest.title('Add Questions')
         import addQuestion
-        addQuestion.addQuestion(addQuestWithCat,selectedCategory)
+        addQuestion.addQuestion(createQuest)
 
 
     
@@ -131,8 +132,7 @@ class AdminOptions(Frame):
 
         #create label for category actions
 
-        lblForSelectedCategory = Label(self, text = "For Selected Category:  ", font=("MS", 8, "bold"),height=2, width = 25)
-        lblForSelectedCategory.grid(row = 16, column = 2, columnspan = 3, sticky = EW, padx=10, pady=2)
+
         
         butViewEditQuestions = Button(self, text = "View / Edit Questions", font=("MS", 8, "bold"),height=2, width = 25)
         ##butViewEditQuestions["command"]=EditQuestions.EditQuestions() ## look
@@ -142,17 +142,36 @@ class AdminOptions(Frame):
         ##butDeleteQuestions["command"]=DeleteQuestions.DeleteQuestions() ## look
         butDeleteQuestions.grid(row=19, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
 
-        butDeleteCategory = Button(self, text = "Delete Category", font=("MS", 8, "bold"),height=2, width = 25)
-        ##butDeleteCateory["command"]=DeleteQuestions.DeleteCategory()
-        butDeleteCategory.grid(row=20, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
-        
+    def launchAddQsToCat(self):
+        currentSelection = self.listCategories.curselection()
+        selectedCategory = self.listCategories.get(currentSelection)
+        self.listCategories.selection_clear(currentSelection)
+        addQ = Toplevel(self.master)
+        addQ.grab_set()
+        addQ.title('Add Questions to Category')
+        import addQuestToCat
+        addQuestToCat.addQuestToCat(addQ, selectedCategory)
+     
+    def addQsToCat(self):
+        lblForSelectedCategory = Label(self, text = "For Selected Category:  ", font=("MS", 8, "bold"),height=2, width = 25)
+        lblForSelectedCategory.grid(row = 20, column = 2, columnspan = 3, sticky = EW, padx=10, pady=2)
+
+        butAddQsToCat  = Button(self, text = "View Questions in Category", font=("MS", 8, "bold"),height=2, width = 21)
+        butAddQsToCat["command"] = self.launchAddQsToCat
+        butAddQsToCat.grid(row = 21, column = 2, columnspan =3, padx = 10, pady =2, sticky = EW)
+
+        btnDeleteCategory = Button(self, text = "Delete Category", font=("MS", 8, "bold"),height=2, width = 25)
+        btnDeleteCategory["command"]=self.deleteCategory
+        btnDeleteCategory.grid(row=22, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
+
     def deleteCategory(self):
         # here delete category from list,
         # also open up questiondb and delete every question with category
-        with shelve.open('categorydb','w') as db:
-            categories = db['cats']
-            
-        pass
+        currentSelection = self.listCategories.curselection()
+        selectedCategory = self.listCategories.get(currentSelection)
+        self.listCategories.selection_clear(currentSelection)
+        Category.deleteCategory(selectedCategory)
+        self.getAvailableCategories()
 
     def logout(self):
         self.master.destroy()
@@ -161,7 +180,8 @@ class AdminOptions(Frame):
 def main():
     root = Tk()  # call the Tk method
     root.title("Admin Options") # set the title
-    app= AdminOptions(root)    # creates a new instance of the AdminOptions class
+    app= AdminOptions(root)
+    app['bg'] = 'gray80'    # creates a new instance of the AdminOptions class
     root.mainloop()  # starts window with mainloop method
 
 if __name__ == "__main__":

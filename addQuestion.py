@@ -11,9 +11,8 @@ class addQuestion(Frame):
 	# GUI Setup 
 
 
-	def __init__(self, master, selCat = ""):
+	def __init__(self, master):
 		# initialise addQuestion class
-		self.selectedCat = selCat
 
 
 		Frame.__init__(self, master)
@@ -43,7 +42,7 @@ class addQuestion(Frame):
 	def adminBtn(self):
 		# Admin Options
 		adminButton = Button(self, text='Admin Options',font=('Helvetica',16))
-		## Need to add in command for admin button here
+		adminButton["command"] = self.master.destroy
 		adminButton.grid(row=0, column=7, columnspan=1, sticky=W)
 
 	def availableQuestions(self):
@@ -60,14 +59,11 @@ class addQuestion(Frame):
 
 		#this should pull questions from shelve file
 		with shelve.open('questiondb') as db:
-			klist = list(db.keys())
-			for questionID in klist:
-				if db[questionID].category == self.selectedCat:
-					questionText = db[questionID].entQuestion
-					self.listQ.insert(END,questionText)
-				elif __name__ == "__main__":
-					questionText = db[questionID].entQuestion
-					self.listQ.insert(END,questionText)			
+			for questionID in db.keys():
+
+				questionText = db[questionID].entQuestion
+				self.listQ.insert(END,questionText)
+	
 
 		# self.listQ.insert(END,0)
 		self.listQ.selection_set(END)
@@ -157,7 +153,7 @@ class addQuestion(Frame):
 			with shelve.open('questiondb','c') as db:
 
 				newQuest = Question(str(questionID),
-					self.selectedCat,'include topics here',self.entQuestion.get(),
+					'','include topics here',self.entQuestion.get(),
 					self.entAnswer.get(),self.entA1.get(),
 					self.entA2.get(),self.entA3.get(),
 					self.file_path)

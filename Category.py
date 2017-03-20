@@ -9,8 +9,6 @@ class Category:
 			if 'cats' not in db:
 				db['cats'] = []
 			categories = db['cats']
-			print(categories)
-			print(newCat)
 			categories.append(newCat)
 			db['cats'] = categories
 
@@ -21,3 +19,20 @@ class Category:
 				return db['cats']
 		else:
 			return ['Error FNF']
+
+	def deleteCategory(catDel):
+		with shelve.open('categorydb','w') as db:
+			categories = db['cats']
+			categories.remove(catDel)
+			db['cats'] = categories
+
+		with shelve.open('questiondb',writeback =True) as db:
+			for questionID in db.keys():
+				if catDel in db[questionID].category:
+
+					tStr = db[questionID].category
+					print(tStr)
+					tStr = tStr.replace((catDel+" "),"")
+					print('inCategoryafterReplaceis' + tStr)
+					db[questionID].category = tStr
+
