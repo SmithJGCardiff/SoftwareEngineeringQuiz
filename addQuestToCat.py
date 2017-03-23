@@ -125,6 +125,7 @@ class addQuestToCat(Frame):
 
 		if listOfSelected > 10:
 			tkm.showerror('Error','Maximum 10 questions per category',parent = self.master)
+			
 
 		else:
 			if listOfSelected < 10:
@@ -144,7 +145,7 @@ class addQuestToCat(Frame):
 								tStr = tStr.replace((self.selectedCat + " "),"")
 								db[questionID].category = tStr
 								
-		self.master.destroy()
+			self.master.destroy()
 
 
 

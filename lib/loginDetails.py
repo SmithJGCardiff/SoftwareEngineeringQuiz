@@ -3,7 +3,7 @@ class loginDetails:
 	def __init__(self, iUsername = '', iPassword = ''):
 		self.username = iUsername
 		self.password = iPassword
-		self.check = check
+		
 
 	def addUserCommandLine():
 		newUser = input('User: ')
@@ -14,6 +14,15 @@ class loginDetails:
 		with shelve.open('logindb','c') as db:
 			db[newCreds.username] = newCreds
 		print('all done')
+	def addUserBox(userN,passN):
+		newCreds = loginDetails(userN, passN)
+		with shelve.open('logindb','c') as db:
+			if userN not in db.keys():
+
+				db[newCreds.username] = newCreds
+				return "success"
+			else:
+				return "error"
 
 	def check(user,passs):
 		with shelve.open('logindb','r') as db:

@@ -130,8 +130,8 @@ class addQuestion(Frame):
 			strMsg += "You have to enter text to save a question. \n"
 		if len(self.entAnswer.get()) == 0:
 			strMsg += "You have to provide a correct answer to the question. \n"
-		if (len(self.entA1.get())==0) and (len(self.entA2.get())==0) and (len(self.entA3.get())==0):
-			strMsg += "You have to provide at least 1 alternate answer. \n"
+		if (len(self.entA1.get())==0) or (len(self.entA2.get())==0) or (len(self.entA3.get())==0):
+			strMsg += "You have to provide alternate answers. \n"
 		
 		if strMsg =="":
 			if self.file_path != '':	
@@ -165,7 +165,7 @@ class addQuestion(Frame):
 
 
 		else:
-			tkm.showwarning("Error",strMsg)
+			tkm.showwarning("Error",strMsg, parent = self.master)
 
 	def getImagePath(self):
 		#Need to check it's an image in gif format, or convert it (PIL)
