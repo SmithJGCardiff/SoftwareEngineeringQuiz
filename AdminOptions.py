@@ -17,6 +17,7 @@ class AdminOptions(Frame):
         self.finalButts()
         self.addQuestionsBtn()
         self.addQsToCat()
+        self.viewEditQuestionsBtn()
         self.master.bind("<Return>",self.addCategories)
         self.txtAddNewCategory.focus_set()
         
@@ -126,25 +127,36 @@ class AdminOptions(Frame):
         import addQuestion
         addQuestion.addQuestion(createQuest)
 
+    def viewEditQuestionsBtn(self):
+        butViewEditQuestions = Button(self, text = "View / Edit Questions", font=("MS", 8, "bold"),height=2, width = 25)
+        butViewEditQuestions["command"]=self.launchViewEditQs ## look
+        butViewEditQuestions.grid(row=18, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
 
     
+    def launchViewEditQs(self):
+        vEdit = Toplevel(self.master)
+        vEdit.grab_set()
+        vEdit.title('Add Questions')
+        import ViewEditQuestionsEntry
+        ViewEditQuestionsEntry.ViewEditQuestions(vEdit)
+
+
+
     def finalButts(self):
         self.btnStartQuiz = Button(self, text = "Use category and start quiz \n (10 question min.)", font=("MS", 8, "bold"),height = 4, width = 25,fg="white", bg="blue")
-        ##butStartQuiz["command"]=TakeQuiz.StartQuiz() ## look
+        self.btnStartQuiz["command"]=self.launchQuiz ## look
         self.btnStartQuiz["state"] = "disabled"
         self.btnStartQuiz.grid(row=12, column=2, columnspan=3, rowspan =2, sticky = EW, padx=10, pady=2)
 
         #create label for category actions
 
-
-        
-        butViewEditQuestions = Button(self, text = "View / Edit Questions", font=("MS", 8, "bold"),height=2, width = 25)
-        ##butViewEditQuestions["command"]=EditQuestions.EditQuestions() ## look
-        butViewEditQuestions.grid(row=18, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
-
         butDeleteQuestions = Button(self, text = "Delete Questions", font=("MS", 8, "bold"),height=2, width = 25)
         ##butDeleteQuestions["command"]=DeleteQuestions.DeleteQuestions() ## look
         butDeleteQuestions.grid(row=19, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
+
+
+
+
 
     def launchQuiz(self):
         selectedCat = self.listCategories.get(self.listCategories.curselection()[0])

@@ -3,6 +3,9 @@ from Question import Question
 import shelve
 from Question import *
 import tkinter.messagebox as tkm
+import tkinter.filedialog as tkf
+
+import os
 
 
 class ViewEditQuestions(Frame):
@@ -12,6 +15,7 @@ class ViewEditQuestions(Frame):
         self.createViewEditQuestions()
         self.availableQuestions()
         self.bindListBox()
+        self.questionImage()
        
     def createViewEditQuestions(self):
         
@@ -24,7 +28,7 @@ class ViewEditQuestions(Frame):
         ## create AdminOptions button
 
         butAdminOptions = Button(self, text = "Admin Options", font=("MS", 8, "bold"), height=1, width = 15)
-        ##butAdminOptions["command"]=AdminOptions.AdminOptions() ## look
+        butAdminOptions["command"]=self.master.destroy ## look
         butAdminOptions.grid(row=0, column=8, columnspan=2, sticky = NW, padx=10, pady=5)
 
         ##sets Category title
@@ -116,6 +120,38 @@ class ViewEditQuestions(Frame):
         
         ##insert available questions
 
+    def getImagePath(self):
+        #Need to check it's an image in gif format, or convert it (PIL)
+       
+        self.file_path = tkf.askopenfilename()
+        self.populateButtons(self.file_path)
+
+    def populateButtons(self,file_path = ""):
+        if self.file_path != "":
+            file_name = os.path.basename(self.file_path)            
+            self.lblFile = Label(self,text=file_name, font=('Helvetica',8,'bold'))
+            self.lblFile.grid(row=19,column = 4,columnspan=2)
+
+            self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))
+            self.btnClearImage['command'] = self.clearImagePath
+            self.btnClearImage.grid(row =19, column=6)
+
+    def questionImage(self):
+        # add image to question button
+        btnImage = Button(self, text='Add Image', font=('Helvetica',8,'bold'))
+        btnImage.grid(row = 18, column = 4,columnspan=2)
+        btnImage['command'] = self.getImagePath
+
+
+    def clearImagePath(self):
+        self.file_path=''
+        try:
+            self.lblFile.grid_forget()
+            self.btnClearImage.grid_forget()
+        except AttributeError:
+            print("Image label and button haven't been created yet but it doesn't matter")
+
+
     def availableQuestions(self):
         #this should pull questions from shelve file
         self.listQ.delete(0,END)
@@ -133,7 +169,7 @@ class ViewEditQuestions(Frame):
         self.txtViewEditChoice3.delete(0,END)
         self.txtViewEditQuestion.delete(0,END)
         self.txtViewEditAnswer.delete(0,END)
-           
+        self.clearImagePath()
         
     def fillTextBox(self,listQ):
         #clears first
@@ -153,6 +189,7 @@ class ViewEditQuestions(Frame):
                     self.txtViewEditChoice1.insert(END,choice1)
                     self.txtViewEditChoice2.insert(END,choice2)
                     self.txtViewEditChoice3.insert(END,choice3)
+                    self.populateButtons(avail[questionID].imageExt)
             
     def getAnchor(self):
         test = self.listQ.get("anchor")
@@ -178,19 +215,19 @@ class ViewEditQuestions(Frame):
                     avail[questionID].entA1 = A1.get()
                     avail[questionID].entA2 = A2.get()
                     avail[questionID].entA3 = A3.get()
+                    avail[questionID].imageExt = self.file_path
                     avail.sync
                     avail.close
                     self.clearEdit()
                     self.availableQuestions()
         else:
-            tkm.showwarning("Error",strMsg)
+            tkm.showwarning("Error",strMsg,parent= self.master)
 
    
-
-
-#main
-root = Tk()  # call the Tk method
-root.title("View/Edit Questions") # set the title
-app= ViewEditQuestions(root)    # creates a new instance of the ViewEditQuestions class
-root.mainloop()  # starts window with mainloop method
+def main():
+    #main
+    root = Tk()  # call the Tk method
+    root.title("View/Edit Questions") # set the title
+    app= ViewEditQuestions(root)    # creates a new instance of the ViewEditQuestions class
+    root.mainloop()  # starts window with mainloop method
 
