@@ -54,16 +54,16 @@ class loginWindow(Frame):
 		username = self.entUsername.get()
 		password = self.entPassword.get()
 		strLogAttempt = loginDetails.check(username, password)
-		print(strLogAttempt)
 		if strLogAttempt == "login successful":
+			self.loginSuccesful()
 
-			self.master.master.destroy()
-			import AdminOptions
-			AdminOptions.main()
 		else:
 			tkm.showerror('Login Denied',strLogAttempt)
 			
-
+	def loginSuccesful(self):
+		self.master.master.destroy()
+		import AdminOptions
+		AdminOptions.main()
 
 	def cancelLogin(self):
 		self.master.destroy()
