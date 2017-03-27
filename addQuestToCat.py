@@ -28,7 +28,7 @@ class addQuestToCat(Frame):
 
 
 	def logo(self):
-        ## create logo
+		## create logo
 		photo = PhotoImage(file="Images/logo.gif")
 		labelLogo = Label(self,image = photo)
 		labelLogo.image=photo

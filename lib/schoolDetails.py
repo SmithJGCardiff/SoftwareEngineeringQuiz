@@ -34,7 +34,7 @@ class schoolDetails(Frame):
 
 
 
-		schoolNames = [" ","Glantaf","Y Wern"]
+		schoolNames = ["Glantaf","Y Wern"]
 		self.schoolName = StringVar()
 		self.schoolName.set(schoolNames[0])
 

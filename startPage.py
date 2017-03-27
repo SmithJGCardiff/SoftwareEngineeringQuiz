@@ -102,7 +102,7 @@ class startPage(Frame):
 		print(str(schoolName))
 		self.master.destroy()
 		import mainQuizWindow
-		mainQuizWindow.main(self.selectedCategory)
+		mainQuizWindow.main(self.selectedCategory,"school")
 
 
 

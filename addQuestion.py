@@ -23,9 +23,10 @@ class addQuestion(Frame):
 		self.availableQuestions()
 		self.textQandA()
 		self.questionImage()
+		self.master.bind("<Return>",self.storeQuestion)
 
 	def logo(self):
-        ## create logo
+		## create logo
 		photo = PhotoImage(file="Images/logo.gif")
 		labelLogo = Label(self,image = photo)
 		labelLogo.image=photo
@@ -124,7 +125,7 @@ class addQuestion(Frame):
 		self.entA2.delete(0,END)
 		self.clearImagePath()
 
-	def storeQuestion(self):
+	def storeQuestion(self,e=""):
 		strMsg = ""
 		if len(self.entQuestion.get()) == 0:
 			strMsg += "You have to enter text to save a question. \n"
@@ -159,6 +160,7 @@ class addQuestion(Frame):
 					self.file_path)
 				db[newQuest.questionID] = newQuest
 			tkm.showinfo('Add Question', 'Question Added', parent = self.master)
+			self.entQuestion.focus_set()
 			self.clearQuestion()
 			self.clearImagePath()
 			self.availableQuestions()

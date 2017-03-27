@@ -5,13 +5,14 @@ import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
 import shelve
 import random
-
+from Event import Event
 class mainQuizWindow(Frame):
 
-	def __init__(self, master,selCat = ""):
+	def __init__(self, master,selCat = "",school = ""):
 
 		Frame.__init__(self, master)
 		self.selectedCategory = selCat
+		self.school = school
 		self.master = master
 		self.grid()
 		self.logo()
@@ -21,7 +22,7 @@ class mainQuizWindow(Frame):
 
 		
 	def logo(self):
-        ## create logo
+		## create logo
 		photo = PhotoImage(file="Images/logo.gif")
 		labelLogo = Label(self,image = photo)
 		labelLogo.image=photo
@@ -34,7 +35,6 @@ class mainQuizWindow(Frame):
 		adminButton.grid(row=1, column=4, columnspan=1, sticky=W)
 
 	def questionText(self):
-		self.scoresDict = dict()
 
 		self.scoreCount = 0
 		self.lblScore = Label(self, text="Current Score \n"+str(self.scoreCount)+"/10", font=('Helvetica', 16))
@@ -43,7 +43,7 @@ class mainQuizWindow(Frame):
 		random.shuffle(self.listOfStuff)
 		self.qNum = 0
 
-		self.lblQuestNum = Label(self, text = ("Question "+str(self.qNum+1)),font=('Helvetica',32))
+		self.lblQuestNum = Label(self, text = ("Question "+str(self.qNum+1)+" of 10"),font=('Helvetica',32))
 		self.lblQuestNum.grid(row = 2, column = 2, columnspan =2, sticky = EW+S)
 
 		self.answerArray = [(2,"Ans"),(3,"A1"),(4,"A2"),(5,"A3")] 
@@ -80,8 +80,9 @@ class mainQuizWindow(Frame):
 
 
 	def displayQuestion(self):
-		if self.qNum == 10:
+		if self.qNum == 9:
 			self.endOfQuiz()
+			return
 
 		self.btnCheckAns["text"] = "Check my Answer"
 
@@ -120,13 +121,13 @@ class mainQuizWindow(Frame):
 		self.lblCorrect["text"] = "Correct"
 		
 		self.btnCheckAns["command"] = self.displayQuestion
-		self.scoresDict[self.listOfStuff[self.qNum][0]] = "incorrect"
+		Event.addQScores(self.listOfStuff[self.qNum][0],"correct")
 
 	def questionIncorrect(self):
 
 		self.btnCheckAns["command"] = self.displayQuestion
 		self.lblCorrect["text"] = "Incorrect"
-		self.scoresDict[self.listOfStuff[self.qNum][0]] = "correct"
+		Event.addQScores(self.listOfStuff[self.qNum][0],"incorrect")
 
 	def checkAnswer(self):
 
@@ -138,7 +139,10 @@ class mainQuizWindow(Frame):
 		self.btnCheckAns["text"] = "Next Question"
 		if self.qNum == 9:
 			self.btnCheckAns["text"] = "End Quiz"
+			self.btnCheckAns["command"] = self.endOfQuiz
 			self.btnResetQuiz["state"] = "disabled"
+
+
 		if self.selected.get() != "Ans":
 			print("Unlucky")
 			self.questionIncorrect()
@@ -173,7 +177,6 @@ class mainQuizWindow(Frame):
 			return listOfQs
 
 	def endOfQuiz(self):
-		print(self.scoresDict)
 		self.lblQuestNum["text"] = "Well Done!"
 		self.lblPic["text"] = "Your score this time was: "
 		self.lblQText["text"] = str(self.scoreCount)+" / 10"
@@ -182,16 +185,24 @@ class mainQuizWindow(Frame):
 		self.btnA2.grid_forget()
 		self.btnA3.grid_forget()
 		self.btnA.grid_forget()
+		self.lblCorrect.grid_forget()
+		self.lblScore.grid_forget()
 		self.btnCheckAns["command"] = self.restartQuiz
 
 		self.btnResetQuiz.grid_forget()
 		# save quiz here 
 		
 	def restartQuiz(self):
+
+		if self.qNum < 10:
+			qIDList = []
+			for i in range(self.qNum+1,10):
+				Event.addQScores(self.listOfStuff[i][0],"unanswered")
+
 		import startPage
 		self.master.destroy()
 		startPage.main(self.selectedCategory)
- 
+
 	def passToAdmin(self):
 		loginBox = Toplevel(self.master)
 		loginBox.grab_set()
@@ -199,10 +210,10 @@ class mainQuizWindow(Frame):
 		from loginWindow import loginWindow
 		loginWindow(loginBox)
 
-def main(selCat):
+def main(selCat,school):
 	root = Tk()
 	root.title("Quiz")
-	mainQuizWindow(root,selCat)
+	mainQuizWindow(root,selCat,school)
 	root.mainloop()
 
 if __name__ == "__main__":

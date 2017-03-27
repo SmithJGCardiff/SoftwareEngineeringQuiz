@@ -13,12 +13,11 @@ class Category:
 			db['cats'] = categories
 
 	def getList():
-		fname = 'categorydb'
-		if os.path.isfile(fname):
-			with shelve.open(fname,'r') as db:
-				return db['cats']
-		else:
-			return ['Error FNF']
+		with shelve.open('categorydb','c') as db:
+			if 'cats' not in db:
+				db['cats'] = []
+			categories = db['cats']
+			return categories
 
 	def deleteCategory(catDel):
 		with shelve.open('categorydb','w') as db:
