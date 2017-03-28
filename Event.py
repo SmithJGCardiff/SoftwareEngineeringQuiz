@@ -28,4 +28,22 @@ class Event:
 					questionScores[qID][2] += 1
 			db["currentEvent"].questions = questionScores
 
+	def getCategory():
+		try:
+			with shelve.open("eventslogdb","r") as db:
+				cat = db["currentEvent"].category
+				return cat
+		except KeyError:
+			return "No current event"
 
+	def setCategory(selCat):
+		with shelve.open("eventslogdb",writeback=True) as db:
+			db["currentEvent"].category = selCat
+
+	def getEventName():
+		try:
+			with shelve.open("eventslogdb","r") as db:
+				name = db["currentEvent"].eventName
+				return name
+		except KeyError:
+			return "No current event"

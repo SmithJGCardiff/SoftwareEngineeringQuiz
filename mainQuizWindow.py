@@ -8,10 +8,9 @@ import random
 from Event import Event
 class mainQuizWindow(Frame):
 
-	def __init__(self, master,selCat = "",school = ""):
+	def __init__(self, master,school = ""):
 
 		Frame.__init__(self, master)
-		self.selectedCategory = selCat
 		self.school = school
 		self.master = master
 		self.grid()
@@ -35,7 +34,7 @@ class mainQuizWindow(Frame):
 		adminButton.grid(row=1, column=4, columnspan=1, sticky=W)
 
 	def questionText(self):
-
+		self.selectedCategory = Event.getCategory()
 		self.scoreCount = 0
 		self.lblScore = Label(self, text="Current Score \n"+str(self.scoreCount)+"/10", font=('Helvetica', 16))
 		self.lblScore.grid(row = 3,column =1)
@@ -91,7 +90,7 @@ class mainQuizWindow(Frame):
 		self.qNum +=1
 		self.lblCorrect["text"] = ""
 		random.shuffle(self.answerArray)
-		self.lblQuestNum["text"] = ("Question "+str(self.qNum+1))
+		self.lblQuestNum["text"] = ("Question "+str(self.qNum+1)+" of 10")
 		self.lblPic["text"] = self.listOfStuff[self.qNum][6]
 		self.lblQText["text"] = self.listOfStuff[self.qNum][1]
 		self.btnA["text"] = self.listOfStuff[self.qNum][self.answerArray[0][0]]
@@ -210,10 +209,10 @@ class mainQuizWindow(Frame):
 		from loginWindow import loginWindow
 		loginWindow(loginBox)
 
-def main(selCat,school):
+def main(school):
 	root = Tk()
 	root.title("Quiz")
-	mainQuizWindow(root,selCat,school)
+	mainQuizWindow(root,school)
 	root.mainloop()
 
 if __name__ == "__main__":

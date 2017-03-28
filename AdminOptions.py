@@ -5,6 +5,7 @@ import shelve
 from Category import Category
 import os
 import tkinter.messagebox as tkm
+from Event import Event
 
 class AdminOptions(Frame):
 	def __init__(self, master):
@@ -159,6 +160,7 @@ class AdminOptions(Frame):
 	def finalButts(self):
 		self.btnStartQuiz = Button(self, text = "Use category and start quiz \n (10 question min.)", font=("MS", 8, "bold"),height = 4, width = 25,fg="white", bg="blue")
 		self.btnStartQuiz["command"]=self.launchQuiz ## look
+
 		self.btnStartQuiz["state"] = "disabled"
 		self.btnStartQuiz.grid(row=18, column=2, columnspan=3, rowspan =2, sticky = EW, padx=10, pady=2)
 
@@ -173,10 +175,10 @@ class AdminOptions(Frame):
 
 
 	def launchQuiz(self):
-		selectedCat = self.listCategories.get(self.listCategories.curselection()[0])
+		Event.setCategory(self.listCategories.get(self.listCategories.curselection()[0]))
 		import startPage
 		self.master.destroy()
-		startPage.main(selectedCat)
+		startPage.main()
 
 
 	def setButtonState(self,e):
@@ -188,9 +190,10 @@ class AdminOptions(Frame):
 			print('disabled')
 		elif (numOfQs == 10 and (self.btnStartQuiz["state"] == "disabled")):
 			self.btnStartQuiz["state"] = "normal"
-			print('normal')
-			print(numOfQs)
-			print(self.btnStartQuiz["state"])
+			if (Event.getEventName() == "No current event"):
+				self.btnStartQuiz["state"] = "disabled"
+				tkm.showerror("Error","You must create an event first", parent = self.master)
+
 		print(numOfQs)
 
 	def launchAddQsToCat(self):

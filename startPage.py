@@ -6,12 +6,12 @@ import random
 from loginWindow import loginWindow
 from lib.loginDetails import loginDetails
 from lib.schoolDetails import schoolDetails
+from Event import Event
 class startPage(Frame):
 
-	def __init__(self,master, selCat= ""):
+	def __init__(self,master):
 
 		Frame.__init__(self, master)
-		self.selectedCategory = selCat
 		self.master = master
 		self.grid()
 		self.logo()
@@ -89,8 +89,14 @@ class startPage(Frame):
 			foreground = 'grey',
 			cursor = 'cross')
 		btnStartQuiz.grid(row = 7, column = 3, columnspan = 4)
+		if (Event.getEventName() == "No current event"):
+			btnStartQuiz["state"] = "disabled"
 		btnStartQuiz["command"] = self.launchSchoolDetails
 
+		currEvent = Event.getEventName()
+		currCat = Event.getCategory()
+		lblInfo = Label(self, text = ("Current Event: " +currEvent+"\n Current Category: " +currCat))
+		lblInfo.grid(row= 7, column = 7)
 	def launchSchoolDetails(self):
 		schoolBox = Toplevel(self.master)
 		schoolBox.grab_set()
@@ -102,7 +108,7 @@ class startPage(Frame):
 		print(str(schoolName))
 		self.master.destroy()
 		import mainQuizWindow
-		mainQuizWindow.main(self.selectedCategory,"school")
+		mainQuizWindow.main("school")
 
 
 
@@ -118,7 +124,7 @@ def main(selCat= "Sports"):
 
 	# root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 	root.title('Quiz')
-	stPage = startPage(root,selCat)
+	stPage = startPage(root)
 	root.mainloop()
 
 if __name__ == "__main__":
