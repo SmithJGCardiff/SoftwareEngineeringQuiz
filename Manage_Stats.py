@@ -139,7 +139,7 @@ class Manage_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Enter a new school name to the school list ***
-		new_school_name = Label(self, text="Add new school to the list: ",font=("Lato",17,"bold"),fg='black',bd=3,height=2,width=25)
+		new_school_name = Label(self, text="Add new school and info: ",font=("Lato",17,"bold"),fg='black',bd=3,height=2,width=25)
 		new_school_name.grid(row=12,column=10,pady=30)
 		new_school_name.grid(rowspan=2)  
 		new_school_name.grid_rowconfigure(0, weight=1)
@@ -159,6 +159,8 @@ class Manage_Stats(Frame):
 		add_school_button.grid(rowspan=2)
 		add_school_button.grid_rowconfigure(0, weight=1)
 		add_school_button.grid_columnconfigure(0, weight=1)
+
+
 
 #--------------------------------------------------------------------------------------------------------------
 

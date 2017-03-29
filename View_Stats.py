@@ -7,6 +7,7 @@ import sys
 import time
 from Question import Question
 from Event import Event
+import csv
 #--------------------------------------------------------------------------------------------------------------
 #import Admin_Options
 
@@ -86,8 +87,8 @@ class View_Stats(Frame):
 		with shelve.open('eventslogdb') as s:
 			for key in s.keys():
 				print (key)
-				tEvent = s[key]
-				events.append(tEvent)
+				self.tEvent = s[key]
+				events.append(self.tEvent)
 
 			# x = s['EVENT_DATA']
 			# #print(x[0])
@@ -157,22 +158,22 @@ class View_Stats(Frame):
 				# print(selected_event+"k2")
 				
 				if(db[key].dateTime in selected_event):
-					tEvent = db[key]
+					self.tEvent = db[key]
 					# print("selectedevent: "+selected_event+" key: " + key)
 					
-					table[0] = tEvent.eventName
+					table[0] = self.tEvent.eventName
 					
-					table[1] = tEvent.dateTime
+					table[1] = self.tEvent.dateTime
 
 					table[2] = "" #Strings with the schools attending initially empty
-					for i in tEvent.schools: #put all the schools in a string to avoid displaying list brackets
+					for i in self.tEvent.schools: #put all the schools in a string to avoid displaying list brackets
 						table[2] = table[2] + ("{}       ".format(i))
 
 					
 					#print(table[3])
 					#print(table[3][1])
-					# print(tEvent.schools)
-		schools = tEvent.schools
+					# print(self.tEvent.schools)
+		schools = self.tEvent.schools
 		currSchool = cSchool
 
 		scroll = Scrollbar(self,command= self.schoolsList.yview)	
@@ -237,19 +238,19 @@ class View_Stats(Frame):
 		self.txtDisplay.insert(END, '   Question' + 9*'\t' + '% Times Correct' + 2*'\t' + '% Times Incorrect' + 2*'\t' + '% Times Skipped' + 2*'\t' + '% Times Unanswered' + '\n\n\n','boldfont' )
 		
 		# questions_list = self.load_questions()
-		questions_list = Question.getQuestsfromCat(tEvent.category)
+		questions_list = Question.getQuestsfromCat(self.tEvent.category)
 
 		for question in questions_list:
 			if (currSchool == "all") and (len(schools) != 1):
 				sum_scores = []
 				for school in schools:
-					scores = Event.getQScores(tEvent.dateTime,question.questionID,school)
+					scores = Event.getQScores(self.tEvent.dateTime,question.questionID,school)
 					sum_scores.append(scores)
 				scores = [sum(x) for x in zip(*sum_scores)]
 			else:
 				if currSchool == "all":
 					currSchool = schools[0]
-				scores = Event.getQScores(tEvent.dateTime,question.questionID,currSchool)
+				scores = Event.getQScores(self.tEvent.dateTime,question.questionID,currSchool)
 			self.txtDisplay.insert(END, '   ' + question.entQuestion + 11*'\t' + '{}'.format(scores[0]) + 2*'\t' + '{}'.format(scores[1]) + 2*'\t' + '{}'.format(scores[2])+ 2*'\t'+ '{}'.format(scores[3]) + '\n\n','boldfont' )
 #--------------------------------------------------------------------------------------------------------------
 
@@ -303,7 +304,15 @@ class View_Stats(Frame):
 
 	def export_stats(self):
 		""" Export statistics to a csv file """
-
+		with open('./Report/'+self.tEvent.dateTime,'w',newline="") as file:
+			fWriter = csv.writer(file, delimiter=',',quotechar='|')
+			fWriter.writerow([self.tEvent.dateTime]+[self.tEvent.eventName]+[self.tEvent.category])
+			myDb = self.tEvent.questions
+			for key in myDb.keys():
+				fWriter.writerow([key])
+				for key2 in myDb[key].keys():
+					fWriter.writerow([key2])
+					fWriter.writerow(["Correct: "+str(myDb[key][key2][0])]+["Incorrect: "+str(myDb[key][key2][1])]+["Skipped: "+str(myDb[key][key2][2])]+["Unanswered: "+str(myDb[key][key2][3])])
 		print('export stats')
 
 #--------------------------------------------------------------------------------------------------------------
@@ -330,7 +339,7 @@ def main():
 		app = View_Stats(root)
 		
 		#*** Get the screen resolution and run the frame in fullscreen. ***
-		#width, height = root.winfo_screenwidth(), root.winfo_screenheight()
+		#width+height = root.winfo_screenwidth(), root.winfo_screenheight()
 		#root.geometry('%dx%d+0+0' % (width,height))
 
 		root.mainloop()
