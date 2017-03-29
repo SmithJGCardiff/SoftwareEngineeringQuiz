@@ -109,6 +109,7 @@ class addQuestion(Frame):
 		btnSubmit = Button(self, text='Save Question', font=('Helvetica',8,'bold'))
 		# need file path
 		self.file_path = ''
+		self.file_name = ""
 		btnSubmit['command'] = self.storeQuestion
 		btnSubmit.grid(row=10,column=6,columnspan=2)
 
@@ -170,11 +171,15 @@ class addQuestion(Frame):
 			tkm.showwarning("Error",strMsg, parent = self.master)
 
 	def getImagePath(self):
+		
+		self.removeButtons()
+		
 		#Need to check it's an image in gif format, or convert it (PIL)
 		self.file_path = tkf.askopenfilename(parent = self.master)
 		if self.file_path != 0:
 			self.file_name = os.path.basename(self.file_path)			
-			self.lblFile = Label(self,text=self.file_name, font=('Helvetica',8,'bold'))
+			self.lblFile = Label(self, font=('Helvetica',8,'bold'))
+			self.lblFile["text"] = self.file_name
 			self.lblFile.grid(row=11,column = 2,columnspan=2)
 
 			self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))
@@ -188,13 +193,19 @@ class addQuestion(Frame):
 		btnImage['command'] = self.getImagePath
 
 
-	def clearImagePath(self):
-		self.file_path=''
+	def removeButtons(self):
 		try:
 			self.lblFile.grid_forget()
+		except AttributeError:
+			print("no file label")
+		try:
 			self.btnClearImage.grid_forget()
 		except AttributeError:
 			print("Image label and button haven't been created yet but it doesn't matter")
+	def clearImagePath(self):
+		self.file_path=''
+		self.removeButtons()
+		
 
 
 	def submitButton(self):

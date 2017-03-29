@@ -4,7 +4,8 @@ import shelve
 from Question import *
 import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
-
+import shutil
+from Event import Event
 import os
 
 
@@ -136,37 +137,53 @@ class ViewEditQuestions(Frame):
 		
 		##insert available questions
 
-	def getImagePath(self):
-		#Need to check it's an image in gif format, or convert it (PIL)
-	   
-		self.file_path = tkf.askopenfilename()
-		self.populateButtons(self.file_path)
 
-	def populateButtons(self,file_path = ""):
-		if self.file_path != "":
-			file_name = os.path.basename(self.file_path)            
-			self.lblFile = Label(self,text=file_name, font=('Helvetica',8,'bold'))
+
+	def populateButtons(self):
+		
+          
+		self.lblFile = Label(self,text=self.file_name, font=('Helvetica',8,'bold'))
+		self.lblFile.grid(row=19,column = 4,columnspan=2)
+
+		self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))
+		self.btnClearImage['command'] = self.clearImagePath
+		self.btnClearImage.grid(row =19, column=6)
+
+	def questionImage(self):
+		# add image to question button
+		self.btnImage = Button(self, text='Add Image', font=('Helvetica',8,'bold'),state = "disabled")
+		self.btnImage.grid(row = 18, column = 4,columnspan=2)
+		self.btnImage['command'] = self.getImagePath
+
+	def getImagePath(self):
+		
+		self.removeButtons()
+		
+		#Need to check it's an image in gif format, or convert it (PIL)
+		self.file_path = tkf.askopenfilename(parent = self.master)
+		if self.file_path != 0:
+			
+			self.file_name = os.path.basename(self.file_path)	
+			self.lblFile = Label(self,text=self.file_name, font=('Helvetica',8,'bold'))
 			self.lblFile.grid(row=19,column = 4,columnspan=2)
 
 			self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))
 			self.btnClearImage['command'] = self.clearImagePath
 			self.btnClearImage.grid(row =19, column=6)
-
-	def questionImage(self):
-		# add image to question button
-		btnImage = Button(self, text='Add Image', font=('Helvetica',8,'bold'))
-		btnImage.grid(row = 18, column = 4,columnspan=2)
-		btnImage['command'] = self.getImagePath
-
-
-	def clearImagePath(self):
-		self.file_path=''
+	def removeButtons(self):
 		try:
 			self.lblFile.grid_forget()
+		except AttributeError:
+			print("no file label")
+		try:
 			self.btnClearImage.grid_forget()
 		except AttributeError:
 			print("Image label and button haven't been created yet but it doesn't matter")
-
+	
+	def clearImagePath(self):
+		self.file_path=''
+		self.removeButtons()
+		
 
 	def availableQuestions(self):
 		#this should pull questions from shelve file
@@ -186,13 +203,14 @@ class ViewEditQuestions(Frame):
 		self.txtViewEditChoice3.delete(0,END)
 		self.txtViewEditQuestion.delete(0,END)
 		self.txtViewEditAnswer.delete(0,END)
-		# self.clearImagePath()
+		self.clearImagePath()
 		
 	def fillTextBox(self,listQ):
 		#clears first
 		self.clearEdit()
 		#adds to question box
 		#adds to other boxes if matched
+
 		with shelve.open('questiondb') as avail:
 			for questionID in avail.keys():
 				if  avail[questionID].entQuestion ==  self.getAnchor():
@@ -201,13 +219,19 @@ class ViewEditQuestions(Frame):
 					choice1 = avail[questionID].entA1
 					choice2 = avail[questionID].entA2
 					choice3 = avail[questionID].entA3
+					category = avail[questionID].category
 					self.txtViewEditQuestion.insert(END,question)
 					self.txtViewEditAnswer.insert(END,answer)
 					self.txtViewEditChoice1.insert(END,choice1)
 					self.txtViewEditChoice2.insert(END,choice2)
 					self.txtViewEditChoice3.insert(END,choice3)
+					self.file_name = avail[questionID].imageExt
+					if self.file_name != "":
+						self.populateButtons()
 					# self.populateButtons(avail[questionID].imageExt)
-		self.butDeleteQuestion["state"] = "normal"
+		if Event.getCategory() not in category:
+			self.butDeleteQuestion["state"] = "normal"
+		self.btnImage["state"] = "normal"
 			
 	def getAnchor(self):
 		test = self.listQ.get("anchor")
@@ -234,11 +258,16 @@ class ViewEditQuestions(Frame):
 						avail[questionID].entA1 = A1.get()
 						avail[questionID].entA2 = A2.get()
 						avail[questionID].entA3 = A3.get()
+						avail[questionID].imageExt = self.file_name
 						# avail[questionID].imageExt = self.file_path
 						# avail.sync
 						# avail.close
-			
-
+			if self.file_path != '':
+				try:
+					local_images = 'Images/'	
+					shutil.copy(self.file_path,local_images)
+				except shutil.SameFileError:
+					pass;
 			tkm.showinfo("Success","Question Saved", parent = self.master)
 			self.clearEdit()
 			self.availableQuestions()

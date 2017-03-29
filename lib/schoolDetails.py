@@ -42,7 +42,7 @@ class schoolDetails(Frame):
 		self.optSchool["width"] =10
 		self.optSchool.grid(row = 3, column = 1,sticky =EW)
 
-		self.btnSubmit = Button(self, text = 'Enter School Details', command = self.validateLogin)
+		self.btnSubmit = Button(self, text = 'Submit', command = self.validateLogin)
 		self.btnSubmit.grid(row = 4, column = 1, columnspan = 2)
 
 		btnCancel = Button(self, text = 'Cancel', command = self.cancelLogin)
