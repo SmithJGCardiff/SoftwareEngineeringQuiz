@@ -55,8 +55,8 @@ class addQuestion(Frame):
 		scroll = Scrollbar(self, command=self.listQ.yview)
 		self.listQ.configure(yscrollcommand=scroll.set)
 
-		self.listQ.grid(row=4, column=1, columnspan=8)
-		scroll.grid(row=4,column=9,rowspan=4,sticky=W)
+		self.listQ.grid(row=4, column=1, columnspan=8,rowspan=4)
+		scroll.grid(row=4,column=9,rowspan=4,sticky=W + NS)
 
 		#this should pull questions from shelve file
 		with shelve.open('questiondb') as db:

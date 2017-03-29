@@ -3,7 +3,7 @@ from lib.loginDetails import loginDetails
 from tkinter import *
 import tkinter.messagebox as tkm
 import tkinter.filedialog as tkf
-
+from Event import Event
 class schoolDetails(Frame):
 
 	def __init__(self, master):
@@ -34,7 +34,7 @@ class schoolDetails(Frame):
 
 
 
-		schoolNames = ["Glantaf","Y Wern"]
+		schoolNames = Event.getSchools()
 		self.schoolName = StringVar()
 		self.schoolName.set(schoolNames[0])
 
@@ -45,16 +45,21 @@ class schoolDetails(Frame):
 		self.btnSubmit = Button(self, text = 'Enter School Details', command = self.validateLogin)
 		self.btnSubmit.grid(row = 4, column = 1, columnspan = 2)
 
-		btnCancel = Button(self, text = 'Cancel', command = self.master.destroy)
+		btnCancel = Button(self, text = 'Cancel', command = self.cancelLogin)
 		btnCancel.grid(row = 5, column = 1, columnspan = 2)
 
 	def enterLogin(self,event):
 		self.validateLogin()
 
+	def cancelLogin(self):
+		self.master.destroy()
+
 	def validateLogin(self):
 		# store school details here
 
-		self.master.destroy()
+		self.master.master.destroy()
+		import mainQuizWindow
+		mainQuizWindow.main(str(self.schoolName))
 
 
 			

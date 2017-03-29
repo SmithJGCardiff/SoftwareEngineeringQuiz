@@ -8,7 +8,7 @@ import random
 from Event import Event
 class mainQuizWindow(Frame):
 
-	def __init__(self, master,school = ""):
+	def __init__(self, master,school):
 
 		Frame.__init__(self, master)
 		self.school = school
@@ -120,13 +120,13 @@ class mainQuizWindow(Frame):
 		self.lblCorrect["text"] = "Correct"
 		
 		self.btnCheckAns["command"] = self.displayQuestion
-		Event.addQScores(self.listOfStuff[self.qNum][0],"correct")
+		Event.addQScores(self.listOfStuff[self.qNum][0],"correct",self.school)
 
 	def questionIncorrect(self):
 
 		self.btnCheckAns["command"] = self.displayQuestion
 		self.lblCorrect["text"] = "Incorrect"
-		Event.addQScores(self.listOfStuff[self.qNum][0],"incorrect")
+		Event.addQScores(self.listOfStuff[self.qNum][0],"incorrect",self.school)
 
 	def checkAnswer(self):
 
@@ -196,11 +196,11 @@ class mainQuizWindow(Frame):
 		if self.qNum < 10:
 			qIDList = []
 			for i in range(self.qNum+1,10):
-				Event.addQScores(self.listOfStuff[i][0],"unanswered")
+				Event.addQScores(self.listOfStuff[i][0],"unanswered",self.school)
 
 		import startPage
 		self.master.destroy()
-		startPage.main(self.selectedCategory)
+		startPage.main()
 
 	def passToAdmin(self):
 		loginBox = Toplevel(self.master)

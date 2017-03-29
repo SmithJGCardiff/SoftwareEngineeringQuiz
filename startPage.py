@@ -89,14 +89,14 @@ class startPage(Frame):
 			foreground = 'grey',
 			cursor = 'cross')
 		btnStartQuiz.grid(row = 7, column = 3, columnspan = 4)
-		if (Event.getEventName() == "No current event"):
+		if (Event.getEventName() == "No current event") or (Event.getCategory() == "No category selected"):
 			btnStartQuiz["state"] = "disabled"
 		btnStartQuiz["command"] = self.launchSchoolDetails
 
 		currEvent = Event.getEventName()
 		currCat = Event.getCategory()
-		lblInfo = Label(self, text = ("Current Event: " +currEvent+"\n Current Category: " +currCat))
-		lblInfo.grid(row= 7, column = 7)
+		lblInfo = Label(self, text = ("\nCurrent Event: " +currEvent+"\n Current Category: " +currCat))
+		lblInfo.grid(row= 9, column = 3,columnspan=4)
 	def launchSchoolDetails(self):
 		schoolBox = Toplevel(self.master)
 		schoolBox.grab_set()
@@ -105,14 +105,10 @@ class startPage(Frame):
 		schoolName = schoolDetails(schoolBox)
 		schoolBox.wait_window()
 		# now store school name
-		print(str(schoolName))
-		self.master.destroy()
-		import mainQuizWindow
-		mainQuizWindow.main("school")
 
 
 
-def main(selCat= "Sports"):
+def main():
 	root = Tk()
 	# w= 700
 	# h = 480

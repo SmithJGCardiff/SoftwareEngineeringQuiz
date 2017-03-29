@@ -9,8 +9,12 @@ class Category:
 			if 'cats' not in db:
 				db['cats'] = []
 			categories = db['cats']
-			categories.append(newCat)
-			db['cats'] = categories
+			if newCat not in categories:
+				categories.append(newCat)
+				db['cats'] = categories
+				return "success"
+			else:
+				return "duplicate"
 
 	def getList():
 		with shelve.open('categorydb','c') as db:

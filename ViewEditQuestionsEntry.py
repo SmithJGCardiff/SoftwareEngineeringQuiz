@@ -29,7 +29,7 @@ class ViewEditQuestions(Frame):
 
 		butAdminOptions = Button(self, text = "Admin Options", font=("MS", 8, "bold"), height=1, width = 15)
 		butAdminOptions["command"]=self.master.destroy ## look
-		butAdminOptions.grid(row=0, column=8, columnspan=2, sticky = NW, padx=10, pady=5)
+		butAdminOptions.grid(row=0, column=8, columnspan=3, sticky = NW, padx=10, pady=5)
 
 		##sets Category title
 		lblCategory = Label(self, text = "Category  ", font=("MS", 12, "bold"))    ### Needs coding
@@ -44,14 +44,14 @@ class ViewEditQuestions(Frame):
 		lblCurrentlyAvailable.grid(row = 3, column = 0, columnspan = 3, sticky = W, padx=10, pady=5)
 
 		#sets up questions listbox
-		self.listQ = Listbox(self,height=6, selectmode = SINGLE)
+		self.listQ = Listbox(self,height=6, selectmode = SINGLE,bg = "white")
 		scroll = Scrollbar(self, command= self.listQ.yview)
 		self.listQ.configure(yscrollcommand=scroll.set, exportselection=False)
 
 		#Placed list box next to label and scroll bar after.  Listbox and scrollbar aligned
 		#to be next to one another
-		self.listQ.grid(row=4, column=0, columnspan=9, sticky=EW, padx=(10,0), pady=5)
-		scroll.grid(row=4,column=9,sticky="nsw", rowspan=6)
+		self.listQ.grid(row=4, column=0, columnspan=10, sticky=EW, padx=(10,0), pady=5)
+		scroll.grid(row=4,column=10,sticky="nsw", rowspan=6)
 
 
 		#create a labelframe to group q and a
@@ -121,14 +121,14 @@ class ViewEditQuestions(Frame):
 		self.butDeleteQuestion.grid(row = 18, column = 6,columnspan = 2)
 	
 	def deleteQuestion(self):
-		with shelve.open('questiondb' ,writeback = True) as db:
-			for qId in db.keys():
-				if db[qId].entQuestion == self.txtViewEditQuestion.get():
-					del db[qId]
-					print(db[qId].entQuestion)
-					print(self.txtViewEditQuestion.get())
+		if tkm.askyesno("Proceed","Are you sure you want to delete this question?",parent = self.master):
+			with shelve.open('questiondb' ,writeback = True) as db:
+				for qId in db.keys():
+					if db[qId].entQuestion == self.txtViewEditQuestion.get():
+						del db[qId]
+
 					
-		self.availableQuestions()
+			self.availableQuestions()
 
 	def bindListBox(self):
 		self.listQ.bind('<<ListboxSelect>>', self.fillTextBox)
@@ -176,6 +176,7 @@ class ViewEditQuestions(Frame):
 			for questionID in klist:
 				questionText = avail[questionID].entQuestion
 				self.listQ.insert(END,questionText)
+				print(questionText)
 				
 		
 	def clearEdit(self):
@@ -185,7 +186,7 @@ class ViewEditQuestions(Frame):
 		self.txtViewEditChoice3.delete(0,END)
 		self.txtViewEditQuestion.delete(0,END)
 		self.txtViewEditAnswer.delete(0,END)
-		self.clearImagePath()
+		# self.clearImagePath()
 		
 	def fillTextBox(self,listQ):
 		#clears first
@@ -205,7 +206,7 @@ class ViewEditQuestions(Frame):
 					self.txtViewEditChoice1.insert(END,choice1)
 					self.txtViewEditChoice2.insert(END,choice2)
 					self.txtViewEditChoice3.insert(END,choice3)
-					self.populateButtons(avail[questionID].imageExt)
+					# self.populateButtons(avail[questionID].imageExt)
 		self.butDeleteQuestion["state"] = "normal"
 			
 	def getAnchor(self):
@@ -221,22 +222,26 @@ class ViewEditQuestions(Frame):
 		A2 = self.txtViewEditChoice2
 		A3 = self.txtViewEditChoice3
 
-		avail = shelve.open('questiondb', writeback=True)
+
 		strMsg = "All boxes must be completed"
 
 		if Q.get() != "" and A.get()!="" and A1.get() != "" and A2.get() !="" and A3.get() !="":    
-			for questionID in avail.keys():
-				if  avail[questionID].entQuestion ==  self.getAnchor():
-					avail[questionID].entQuestion = Q.get() 
-					avail[questionID].entAnswer =  A.get()
-					avail[questionID].entA1 = A1.get()
-					avail[questionID].entA2 = A2.get()
-					avail[questionID].entA3 = A3.get()
-					avail[questionID].imageExt = self.file_path
-					avail.sync
-					avail.close
-					self.clearEdit()
-					self.availableQuestions()
+			with shelve.open('questiondb', writeback=True) as avail:
+				for questionID in avail.keys():
+					if  avail[questionID].entQuestion ==  self.getAnchor():
+						avail[questionID].entQuestion = Q.get() 
+						avail[questionID].entAnswer =  A.get()
+						avail[questionID].entA1 = A1.get()
+						avail[questionID].entA2 = A2.get()
+						avail[questionID].entA3 = A3.get()
+						# avail[questionID].imageExt = self.file_path
+						# avail.sync
+						# avail.close
+			
+
+			tkm.showinfo("Success","Question Saved", parent = self.master)
+			self.clearEdit()
+			self.availableQuestions()
 		else:
 			tkm.showwarning("Error",strMsg,parent= self.master)
 

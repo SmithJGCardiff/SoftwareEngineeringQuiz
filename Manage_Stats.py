@@ -1,7 +1,8 @@
 
 #*** Imports ***
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox as tkm
+
 import shelve
 import sys
 import os
@@ -123,14 +124,16 @@ class Manage_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Loading the school names in the listbox ***
-		db = shelve.open('schoolsdb')
-		schools_list = db['Schools']
-		db.close()
+		with shelve.open('schoolsdb','c') as db:
+			if "Schools" in db.keys():
+				schools_list = db['Schools']
+
+			else:
+				schools_list = ["No schools currently"]
 
 		for school in sorted(schools_list):
 			self.school_list.insert(END, school)
 
-		self.school_list.selection_set(END)
 
 		
 #--------------------------------------------------------------------------------------------------------------
@@ -173,7 +176,9 @@ class Manage_Stats(Frame):
 
 	def admin_options(self):
 		""" Login to admin menu. Grant access only to authorised users. """
-
+		import AdminOptions
+		self.master.destroy()
+		AdminOptions.main()
 		#os.system('python3 AdminOptions.py') THIS IS GOING TO EXECUTE THE ADMIN OPTIONS SCRIPT
 #--------------------------------------------------------------------------------------------------------------
 
@@ -232,7 +237,8 @@ class Manage_Stats(Frame):
 
 		event_name = self.event_entry.get() #Name of the event
 		event_date = time.ctime() #The date of the event
-		event_schools = self.schools_selection() #The schools tha will participate in the event
+		event_schools = self.schools_selection()
+		 #The schools tha will participate in the event
 		#event_category = [] #The 10 questions selected for the specific event
 		
 
@@ -262,12 +268,12 @@ class Manage_Stats(Frame):
 					db["currentEvent"] = EVENT_DATA
 
 			else:
-				self.warning_message('You have to add at least one school for the event!')
+				tkm.showerror("Error",'You have to add at least one school for the event!',parent=self.master)
 		else:
-			self.warning_message('You have to enter a name for the event!')
+			tkm.showerror("Error",'You have to enter a name for the event!',parent=self.master)
 		
 
-
+		tkm.showinfo("Event Created","You have created an event, please add a category before starting the quiz",parent = self.master)
 		#Clear event entry text field
 		self.event_entry.delete(0, 'end')
 
@@ -293,10 +299,17 @@ class Manage_Stats(Frame):
 		school_name = self.school_entry.get()
 
 		if(school_name != ''):
-			with shelve.open('schoolsdb') as db:
-				schools_list = db['Schools']
-				schools_list.append(school_name)
-				schools_list = sorted(schools_list)
+			with shelve.open('schoolsdb','c') as db:
+				if "Schools" in db.keys():
+					schools_list = db['Schools']
+					if school_name not in schools_list:
+						schools_list.append(school_name)
+						schools_list = sorted(schools_list)
+					else:
+						tkm.showerror("Error","School already present",parent = self.master)
+				else:
+					schools_list = [school_name]
+				
 				db['Schools'] = schools_list
 
 
@@ -307,7 +320,6 @@ class Manage_Stats(Frame):
 			for school in schools_list:
 				self.school_list.insert(END, school)
 
-			self.school_list.selection_set(END)
 			
 			self.school_entry.update_idletasks() # Update school listbox
 
