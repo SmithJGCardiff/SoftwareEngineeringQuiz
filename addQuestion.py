@@ -157,7 +157,7 @@ class addQuestion(Frame):
 					'','include topics here',self.entQuestion.get(),
 					self.entAnswer.get(),self.entA1.get(),
 					self.entA2.get(),self.entA3.get(),
-					self.file_path)
+					self.file_name)
 				db[newQuest.questionID] = newQuest
 			tkm.showinfo('Add Question', 'Question Added', parent = self.master)
 			self.entQuestion.focus_set()
@@ -171,10 +171,10 @@ class addQuestion(Frame):
 
 	def getImagePath(self):
 		#Need to check it's an image in gif format, or convert it (PIL)
-		self.file_path = tkf.askopenfilename()
+		self.file_path = tkf.askopenfilename(parent = self.master)
 		if self.file_path != 0:
-			file_name = os.path.basename(self.file_path)			
-			self.lblFile = Label(self,text=file_name, font=('Helvetica',8,'bold'))
+			self.file_name = os.path.basename(self.file_path)			
+			self.lblFile = Label(self,text=self.file_name, font=('Helvetica',8,'bold'))
 			self.lblFile.grid(row=11,column = 2,columnspan=2)
 
 			self.btnClearImage = Button(self,text='remove', font=('Helvetica',8))

@@ -17,27 +17,55 @@ class Event:
 						questionScores[school][qID][0] += 1
 					elif state == "incorrect":
 						questionScores[school][qID][1] += 1
-					elif state == "unanswered":
+					elif state == "skipped":
 						questionScores[school][qID][2] += 1
+					elif state == "unanswered":
+						questionScores[school][qID][3] += 1
 				else:
-					questionScores[school][qID] = [0,0,0]
+					questionScores[school][qID] = [0,0,0,0]
 					if state == "correct":
 						questionScores[school][qID][0] += 1
 					elif state == "incorrect":
 						questionScores[school][qID][1] += 1
-					elif state == "unanswered":
+					elif state == "skipped":
 						questionScores[school][qID][2] += 1
+					elif state == "unanswered":
+						questionScores[school][qID][3] += 1
 			else:
 				questionScores[school] = dict()
-				questionScores[school][qID] = [0,0,0]
+				questionScores[school][qID] = [0,0,0,0]
 
 				if state == "correct":
 					questionScores[school][qID][0] += 1
 				elif state == "incorrect":
 					questionScores[school][qID][1] += 1
-				elif state == "unanswered":
+				elif state == "skipped":
 					questionScores[school][qID][2] += 1
+				elif state == "unanswered":
+					questionScores[school][qID][3] += 1
 			db["currentEvent"].questions = questionScores
+	
+	
+	def getQScores(dateTime,qID,school):
+		with shelve.open("eventslogdb","r") as db:
+
+			for k in db.keys():
+
+				if db[k].dateTime == dateTime:
+
+					questionScores = db[k].questions
+					if school in questionScores.keys():
+						print("success")
+						print(school)
+						print(questionScores.keys())
+						scores = questionScores[school][qID]
+					else:
+						print("Fail")
+						print(school)
+						print(questionScores.keys())
+						scores = [0,0,0,0]
+					return scores
+
 
 	def getCategory():
 		try:
@@ -67,3 +95,4 @@ class Event:
 		with shelve.open("eventslogdb","r") as db:
 			schools = db["currentEvent"].schools
 			return schools
+

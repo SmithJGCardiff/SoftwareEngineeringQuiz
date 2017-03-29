@@ -203,7 +203,6 @@ class Manage_Stats(Frame):
 				db[currentEvent.dateTime] = currentEvent
 
 		# os.system('python3 Main_Quiz.py') THIS IS GOING TO EXECUTE THE MAIN MENU QUIZ SCRIPT
-		print('refresh quiz')
 
 #--------------------------------------------------------------------------------------------------------------
 

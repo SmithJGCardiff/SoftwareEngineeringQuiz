@@ -146,6 +146,7 @@ class AdminOptions(Frame):
 	def viewEditQuestionsBtn(self):
 		butViewEditQuestions = Button(self, text = "View / Edit Questions", font=("MS", 8, "bold"),height=2, width = 25,bg="white")
 		butViewEditQuestions["command"]=self.launchViewEditQs ## look
+
 		butViewEditQuestions.grid(row=22, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
 
 	
@@ -223,12 +224,13 @@ class AdminOptions(Frame):
 
 		self.butAddQsToCat  = Button(self, text = "View Questions in Category", font=("MS", 8, "bold"),height=2, width = 21,bg="white")
 		self.butAddQsToCat["command"] = self.launchAddQsToCat
+		self.butAddQsToCat["state"] = "disabled"
 		self.butAddQsToCat.grid(row = 27, column = 2, columnspan =3, padx = 10, pady =2, sticky = EW)
 
 		self.btnDeleteCategory = Button(self, text = "Delete Category", font=("MS", 8, "bold"),height=2, width = 25,bg="white")
 		self.btnDeleteCategory["command"]=self.deleteCategory
 		self.btnDeleteCategory.grid(row=28, column=2, columnspan=3, sticky = EW, padx=10, pady=2)
-
+		self.btnDeleteCategory["state"] = "disabled"
 	def deleteCategory(self):
 		# here delete category from list,
 		# also open up questiondb and delete every question with category

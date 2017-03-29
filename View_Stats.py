@@ -5,6 +5,8 @@ import shelve
 import os
 import sys
 import time
+from Question import Question
+from Event import Event
 #--------------------------------------------------------------------------------------------------------------
 #import Admin_Options
 
@@ -17,10 +19,10 @@ class View_Stats(Frame):
 		
 		Frame.__init__(self, master)
 		self.grid()
-		self.events_list = Listbox(self,height=8,width=5,bg='white',font=('Lato',12,'bold'),selectmode=SINGLE)
-		self.events_list.bind('<Double-Button-1>',self.display_event_stats)
-		self.create_interface()
 		
+		self.events_list = Listbox(self,height=8,width=6,bg='white',font=('Lato',12,'bold'),selectmode=SINGLE,exportselection = 0)
+		self.schoolsList = Listbox(self,height=8,width=8,bg='white',font=('Lato',12,'bold'),selectmode=SINGLE,exportselection = 0)
+		self.create_interface()	
 #--------------------------------------------------------------------------------------------------------------
 
 
@@ -39,7 +41,7 @@ class View_Stats(Frame):
 		#*** Create Admin Options button ***
 		admin_button = Button(self,text="Admin Options",font=('Lato',11,'bold'),height=1,width=15,bg='Gray',fg='black',command=self.admin_options)
 		admin_button.bind("<Button-1>")
-		admin_button.grid(row=0,column=14,padx=(180,0),ipadx=10,ipady=7,sticky=NE)
+		admin_button.grid(row=0,column=14,padx=(100,0),ipadx=10,ipady=7,sticky=NE)
 		admin_button.grid(rowspan=2,columnspan=2)
 		admin_button.config(highlightbackground='black')
 		admin_button.grid_rowconfigure(0, weight=1)
@@ -56,7 +58,7 @@ class View_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Select event to see statistics ***
-		select_event = Label(self, text="Select event to see the statistics (double-click): ",font=("Lato",15,"bold"))
+		select_event = Label(self, text="Select event to see the statistics: ",font=("Lato",15,"bold"))
 		select_event.grid(row=1,column=0,sticky=NW,padx=(20,0),pady=(20,20))
 		select_event.grid_rowconfigure(0, weight=1)
 		select_event.grid_columnconfigure(0, weight=1)
@@ -65,7 +67,7 @@ class View_Stats(Frame):
 
 		#*** Listbox with event names ***
 		scroll = Scrollbar(self,command= self.events_list.yview)	
-		scroll.grid(row=2, column=1, sticky=NS)
+		scroll.grid(row=2, column=1, sticky=NS+W)
 		scroll.grid(rowspan=2)
 		scroll.config(highlightbackground='black')
 		scroll.grid_rowconfigure(0, weight=1)
@@ -80,11 +82,13 @@ class View_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Loading the event names in the listbox. ***
-
+		events = []
 		with shelve.open('eventslogdb') as s:
-			events = []
-			for i in s.keys():
-				events.append(i)
+			for key in s.keys():
+				print (key)
+				tEvent = s[key]
+				events.append(tEvent)
+
 			# x = s['EVENT_DATA']
 			# #print(x[0])
 			# for item in x:
@@ -94,59 +98,113 @@ class View_Stats(Frame):
 			# 	events = sorted(events)
 
 		for event in events:
-			self.events_list.insert(END, event)
+			self.events_list.insert(END, "{0.dateTime:<25} {0.eventName}".format(event))
 
-		self.events_list.selection_set(END)
-
+		# self.events_list.select_set(END)
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Cancel button ***
 		cancel_button = Button(self,text="Cancel",font=('Lato',12,'bold'),height=1,width=15,bg='Gray',fg='black',command=self.cancel)
 		cancel_button.bind("<Button-1>")
-		cancel_button.grid(row=2,column=2,pady=2,ipadx=5,ipady=2,sticky=SW)
-		cancel_button.grid(rowspan=2)
+		cancel_button.grid(row=0,column=14,padx=(100,0),ipadx=10,ipady=7,sticky=NE)
+		cancel_button.grid(rowspan=2,columnspan=2)
 		cancel_button.config(highlightbackground='black')
 		cancel_button.grid_rowconfigure(0, weight=1)
 		cancel_button.grid_columnconfigure(0, weight=1)
+
+		addEv_button = Button(self,text="Show Event",font=('Lato',12,'bold'),height=1,width=15,bg='Gray',fg='black',command=self.display_event_stats)
+		addEv_button.bind("<Button-1>")
+		addEv_button.grid(row=2,column=2,pady=2,ipadx=5,ipady=2,sticky=SW)
+		addEv_button.grid(rowspan=2)
+		addEv_button.config(highlightbackground='black')
+		addEv_button.grid_rowconfigure(0, weight=1)
+		addEv_button.grid_columnconfigure(0, weight=1)
 
 	
 
 #--------------------------------------------------------------------------------------------------------------
 		
 	#*** Get selected event from listbox to display its statistics ***
+	def display_event_first(self):
+		schoolsL = self.schoolsList.curselection()
 
-	def display_event_stats(self,event):
-		
-
+		selected_school = self.schoolsList.get(schoolsL)
 
 		events = self.events_list.curselection()
+		print(events)
+		selected_event = self.events_list.get(events)
+		
+		self.display_event_stats(selected_school)
 
+
+
+	
+	def display_event_stats(self,cSchool="all"):
+		
+		# print(event)
+
+		events = self.events_list.curselection()
+		print(events)
 		selected_event = self.events_list.get(events)
 
 
-		#print(selected_event)
+		# print(selected_event)
 		table = [0,0,0,0]
 
 		with shelve.open('eventslogdb') as db:
 			for key in db.keys():
-				#print(key)
-				#print(selected_event)
+				# print(db[key].dateTime)
+				# print(selected_event+"k2")
 				
-				if(selected_event == key):
+				if(db[key].dateTime in selected_event):
+					tEvent = db[key]
+					# print("selectedevent: "+selected_event+" key: " + key)
 					
-					table[0] = selected_event
+					table[0] = tEvent.eventName
 					
-					table[1] = db[key][1]
+					table[1] = tEvent.dateTime
 
 					table[2] = "" #Strings with the schools attending initially empty
-					for i in db[key][2]: #put all the schools in a string to avoid displaying list brackets
+					for i in tEvent.schools: #put all the schools in a string to avoid displaying list brackets
 						table[2] = table[2] + ("{}       ".format(i))
 
-					table[3] = db[key][4]
+					
 					#print(table[3])
 					#print(table[3][1])
+					# print(tEvent.schools)
+		schools = tEvent.schools
+		currSchool = cSchool
+
+		scroll = Scrollbar(self,command= self.schoolsList.yview)	
+		scroll.grid(row=2, column=6, sticky=NS +W)
+		scroll.grid(rowspan=2)
+		scroll.config(highlightbackground='black')
+		scroll.grid_rowconfigure(0, weight=1)
+		scroll.grid_columnconfigure(0, weight=1)		
+		
+		self.schoolsList.configure(yscrollcommand=scroll.set)
+		self.schoolsList.config(highlightbackground='black')
+		self.schoolsList.grid(row=2, column=4, rowspan=2,columnspan=2,sticky=EW,padx=(20,0))
+		self.schoolsList.grid_rowconfigure(0, weight=1)
+		self.schoolsList.grid_columnconfigure(0, weight=1)
+
+		self.btnChooseSchool = Button(self,text="Choose School",font=('Lato',12,'bold'),height=1,width=15,bg='Gray',fg='black',command=self.display_event_first)
+		self.btnChooseSchool.bind("<Button-1>")
+		self.btnChooseSchool.grid(row=2,column=7,pady=2,ipadx=5,ipady=2,sticky=SW)
+		self.btnChooseSchool.grid(rowspan=2)
+		self.btnChooseSchool.config(highlightbackground='black')
+		self.btnChooseSchool.grid_rowconfigure(0, weight=1)
+		self.btnChooseSchool.grid_columnconfigure(0, weight=1)
+		self.schoolsList.delete(0,END)
+		for school in schools:
+			self.schoolsList.insert(END,school)
+			if school == currSchool:
+				self.schoolsList.select_set(END)
 
 
+		self.schoolsList.insert(END,"all")
+		if currSchool == "all":
+			self.schoolsList.select_set(END)
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Display statistics for selected event. **
@@ -176,14 +234,23 @@ class View_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 		#*** Questions ***
-		self.txtDisplay.insert(END, '   Question' + 11*'\t' + '% Times Correct' + 3*'\t' + '% Times Incorrect' + 3*'\t' + '% Times Left' + '\n\n\n','boldfont' )
+		self.txtDisplay.insert(END, '   Question' + 9*'\t' + '% Times Correct' + 2*'\t' + '% Times Incorrect' + 2*'\t' + '% Times Skipped' + 2*'\t' + '% Times Unanswered' + '\n\n\n','boldfont' )
 		
-		questions_list = self.load_questions()
+		# questions_list = self.load_questions()
+		questions_list = Question.getQuestsfromCat(tEvent.category)
 
 		for question in questions_list:
-			self.txtDisplay.insert(END, '   ' + question + '\n\n','boldfont')
-
-		self.txtDisplay.insert(END, '   {}'.format('question 1') + 11*'\t' + '{}'.format(table[3][0][0]) + 3*'\t' + '{}'.format(table[3][0][1]) + 3*'\t' + '{}'.format(table[3][0][2]) + '\n\n\n','boldfont' )
+			if (currSchool == "all") and (len(schools) != 1):
+				sum_scores = []
+				for school in schools:
+					scores = Event.getQScores(tEvent.dateTime,question.questionID,school)
+					sum_scores.append(scores)
+				scores = [sum(x) for x in zip(*sum_scores)]
+			else:
+				if currSchool == "all":
+					currSchool = schools[0]
+				scores = Event.getQScores(tEvent.dateTime,question.questionID,currSchool)
+			self.txtDisplay.insert(END, '   ' + question.entQuestion + 11*'\t' + '{}'.format(scores[0]) + 2*'\t' + '{}'.format(scores[1]) + 2*'\t' + '{}'.format(scores[2])+ 2*'\t'+ '{}'.format(scores[3]) + '\n\n','boldfont' )
 #--------------------------------------------------------------------------------------------------------------
 
 		self.txtDisplay.config(state=DISABLED)
@@ -217,20 +284,20 @@ class View_Stats(Frame):
 
 #--------------------------------------------------------------------------------------------------------------
 
-	def load_questions(self):
-		""" Load event's questions"""
+	# def load_questions(self):
+	# 	""" Load event's questions"""
 
-		filename = 'questionsdb'
-		check_file = os.path.isfile(filename)
+	# 	filename = 'questiondb'
+	# 	check_file = os.path.isfile(filename)
 		
-		if(check_file is True): 
-			db = shelve.open('questionsdb')
-			questions = db['Questions']
-			db.close()
-			return questions
+	# 	if(check_file is True): 
+	# 		db = shelve.open('questiondb')
+	# 		questions = db['Questions']
+	# 		db.close()
+	# 		return questions
 		
-		else:
-			file_warning(filename)
+	# 	else:
+	# 		file_warning(filename)
 
 #--------------------------------------------------------------------------------------------------------------
 
@@ -242,14 +309,14 @@ class View_Stats(Frame):
 #--------------------------------------------------------------------------------------------------------------
 
 #*** Functions ***
-def file_warning(filename):
-	""" Warn user in case the file he tries to open is not in the directory. """
+# def file_warning(filename):
+# 	""" Warn user in case the file he tries to open is not in the directory. """
 	
-	try:
-		messagebox.showwarning('Warning! File {} not found in directory.'.format(filename))
+# 	try:
+# 		messagebox.showwarning('Warning! File {} not found in directory.'.format(filename))
 
-	except Exception as e:
-		print(e)
+# 	except Exception as e:
+# 		print(e)
 
 #--------------------------------------------------------------------------------------------------------------
 

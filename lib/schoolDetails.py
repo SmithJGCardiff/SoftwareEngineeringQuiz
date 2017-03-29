@@ -59,7 +59,7 @@ class schoolDetails(Frame):
 
 		self.master.master.destroy()
 		import mainQuizWindow
-		mainQuizWindow.main(str(self.schoolName))
+		mainQuizWindow.main(self.schoolName.get())
 
 
 			

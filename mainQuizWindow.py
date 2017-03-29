@@ -34,6 +34,7 @@ class mainQuizWindow(Frame):
 		adminButton.grid(row=1, column=4, columnspan=1, sticky=W)
 
 	def questionText(self):
+		self.myBool = False
 		self.selectedCategory = Event.getCategory()
 		self.scoreCount = 0
 		self.lblScore = Label(self, text="Current Score \n"+str(self.scoreCount)+"/10", font=('Helvetica', 16))
@@ -47,51 +48,79 @@ class mainQuizWindow(Frame):
 
 		self.answerArray = [(2,"Ans"),(3,"A1"),(4,"A2"),(5,"A3")] 
 		random.shuffle(self.answerArray)
-
-		self.lblPic = Label(self, text = self.listOfStuff[self.qNum][6])
+		self.lblPic = Label(self)
 		self.lblPic.grid(row = 3, column = 2, columnspan = 2, rowspan = 2, sticky = EW + NS)
-
+		if self.listOfStuff[self.qNum][6] != "":
+			photo = PhotoImage(file=("Images/"+self.listOfStuff[self.qNum][6]))
+			self.lblPic["image"] = photo
+			self.lblPic.image = photo
 		self.lblQText = Label(self, text = self.listOfStuff[self.qNum][1] )
 		self.lblQText.grid(row = 5, column = 2, columnspan = 2)
 
 		self.selected = StringVar()
 
-		self.btnA =  Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[0][0]], variable=self.selected,value=self.answerArray[0][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25)
-		self.btnA1 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[1][0]], variable=self.selected,value=self.answerArray[1][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25)
-		self.btnA2 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[2][0]], variable=self.selected,value=self.answerArray[2][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25)
-		self.btnA3 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[3][0]], variable=self.selected,value=self.answerArray[3][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25)
+		self.btnA =  Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[0][0]], variable=self.selected,value=self.answerArray[0][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25,command = self.rbPressed)
+		self.btnA1 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[1][0]], variable=self.selected,value=self.answerArray[1][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25,command = self.rbPressed)
+		self.btnA2 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[2][0]], variable=self.selected,value=self.answerArray[2][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25,command = self.rbPressed)
+		self.btnA3 = Radiobutton(self,text = self.listOfStuff[self.qNum][self.answerArray[3][0]], variable=self.selected,value=self.answerArray[3][1],indicatoron=0, font=("MS", 8, "bold"),height=2, width = 25,command = self.rbPressed)
 			
 		self.btnA.grid(row = 6, column = 2)
 		self.btnA1.grid(row = 6, column = 3)
 		self.btnA2.grid(row = 7, column = 2)
 		self.btnA3.grid(row = 7, column = 3)
-
-		self.btnCheckAns = Button(self,text = "Check My Answer")
-		self.btnCheckAns["command"] = self.checkAnswer
+		print(self.selected)
+		self.btnCheckAns = Button(self,text = "Skip")
+		self.btnCheckAns["command"] = self.skipQ
 		self.btnCheckAns.grid(row = 8, column = 2, columnspan = 2)
 
 		self.btnResetQuiz = Button(self, text = "Reset the Quiz")
+		self.btnResetQuiz["state"] = "disabled"
 		self.btnResetQuiz["command"] = self.endOfQuiz
 		self.btnResetQuiz.grid(row = 9, column = 2, columnspan = 2)
 
-		self.lblCorrect = Label(self)
+		self.lblCorrect = Label(self, font = ('MS',14,'bold'))
 		self.lblCorrect.grid(row = 1, column = 2, columnspan  =2)
 
+	def rbPressed(self):
+		if self.btnResetQuiz["state"] == "disabled":
+			self.btnResetQuiz["state"] = "normal"
+			self.btnCheckAns["command"] = self.checkAnswer
+			self.btnCheckAns["text"] = "Check my Answer"
+
+	def skipQ(self):
+		Event.addQScores(self.listOfStuff[self.qNum][0],'skipped',self.school)
+		self.myBool = True
+		self.rbPressed()
+		self.checkAnswer()
 
 	def displayQuestion(self):
 		if self.qNum == 9:
 			self.endOfQuiz()
 			return
 
-		self.btnCheckAns["text"] = "Check my Answer"
+		self.btnCheckAns["text"] = "Skip"
 
-		self.btnCheckAns["command"] = self.checkAnswer
+		self.btnCheckAns["command"] = self.skipQ
+		self.btnResetQuiz["state"] = "disabled"
 
 		self.qNum +=1
 		self.lblCorrect["text"] = ""
 		random.shuffle(self.answerArray)
 		self.lblQuestNum["text"] = ("Question "+str(self.qNum+1)+" of 10")
-		self.lblPic["text"] = self.listOfStuff[self.qNum][6]
+		# self.lblPic["text"] = self.listOfStuff[self.qNum][6]
+		if self.listOfStuff[self.qNum][6] != "":
+			print(self.listOfStuff[self.qNum][6])
+			photo = PhotoImage(file=("Images/"+self.listOfStuff[self.qNum][6]))
+			print("Images/"+self.listOfStuff[self.qNum][6])
+			self.lblPic.image = photo
+			self.lblPic["image"] = photo
+			self.lblPic.grid(row = 3, column = 2, columnspan = 2, rowspan = 2, sticky = EW + NS)
+
+		else:
+			# self.lblPic["text"] = ""
+			self.lblPic.image = ""
+			self.lblPic.image = ""
+			self.lblPic.grid_forget()
 		self.lblQText["text"] = self.listOfStuff[self.qNum][1]
 		self.btnA["text"] = self.listOfStuff[self.qNum][self.answerArray[0][0]]
 		self.btnA1["text"] = self.listOfStuff[self.qNum][self.answerArray[1][0]]
@@ -125,18 +154,21 @@ class mainQuizWindow(Frame):
 	def questionIncorrect(self):
 
 		self.btnCheckAns["command"] = self.displayQuestion
-		self.lblCorrect["text"] = "Incorrect"
-		Event.addQScores(self.listOfStuff[self.qNum][0],"incorrect",self.school)
-
+		self.lblCorrect["text"] = "Incorrect\nThe answer was "+ self.listOfStuff[self.qNum][2]
+		if self.myBool == False:
+			Event.addQScores(self.listOfStuff[self.qNum][0],"incorrect",self.school)
+		else:
+			self.myBool = True
 	def checkAnswer(self):
 
 		self.btnA["state"] = "disabled" 
 		self.btnA1["state"] = "disabled"
 		self.btnA2["state"] = "disabled"
 		self.btnA3["state"] = "disabled"
-		currQID = self.listOfStuff[self.qNum][0]
+		self.currQID = self.listOfStuff[self.qNum][0]
 		self.btnCheckAns["text"] = "Next Question"
 		if self.qNum == 9:
+
 			self.btnCheckAns["text"] = "End Quiz"
 			self.btnCheckAns["command"] = self.endOfQuiz
 			self.btnResetQuiz["state"] = "disabled"
@@ -177,7 +209,10 @@ class mainQuizWindow(Frame):
 
 	def endOfQuiz(self):
 		self.lblQuestNum["text"] = "Well Done!"
-		self.lblPic["text"] = "Your score this time was: "
+		self.lblPic.grid_forget()
+		self.lblScoreThis = Label(self, text= "Your score this time was: ")
+		self.lblScoreThis.grid(row = 3, column = 2, columnspan = 2, rowspan = 2, sticky = EW + NS)
+
 		self.lblQText["text"] = str(self.scoreCount)+" / 10"
 		self.btnCheckAns["text"] = "Restart the quiz"
 		self.btnA1.grid_forget()
@@ -194,9 +229,9 @@ class mainQuizWindow(Frame):
 	def restartQuiz(self):
 
 		if self.qNum < 10:
-			qIDList = []
-			for i in range(self.qNum+1,10):
-				Event.addQScores(self.listOfStuff[i][0],"unanswered",self.school)
+			for i in range(self.qNum+2,11):
+				print(i)
+				Event.addQScores(self.listOfStuff[i-1][0],"unanswered",self.school)
 
 		import startPage
 		self.master.destroy()
