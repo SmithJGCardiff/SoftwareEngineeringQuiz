@@ -182,6 +182,7 @@ class ViewEditQuestions(Frame):
 	
 	def clearImagePath(self):
 		self.file_path=''
+		self.file_name=''
 		self.removeButtons()
 		
 
@@ -193,7 +194,6 @@ class ViewEditQuestions(Frame):
 			for questionID in klist:
 				questionText = avail[questionID].entQuestion
 				self.listQ.insert(END,questionText)
-				print(questionText)
 				
 		
 	def clearEdit(self):
