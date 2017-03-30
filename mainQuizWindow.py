@@ -69,9 +69,9 @@ class mainQuizWindow(Frame):
 		self.btnA2.grid(row = 7, column = 2)
 		self.btnA3.grid(row = 7, column = 3)
 		print(self.selected)
-		self.btnCheckAns = Button(self,text = "Skip")
+		self.btnCheckAns = Button(self,text = "Skip",font=("MS",16,'bold'),bg='lightblue')
 		self.btnCheckAns["command"] = self.skipQ
-		self.btnCheckAns.grid(row = 8, column = 2, columnspan = 2)
+		self.btnCheckAns.grid(row = 8, column = 2, columnspan = 2,padx=10,pady=20)
 
 		self.btnResetQuiz = Button(self, text = "Reset the Quiz")
 		self.btnResetQuiz["state"] = "disabled"

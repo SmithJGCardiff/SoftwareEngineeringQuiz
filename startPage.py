@@ -7,6 +7,8 @@ from loginWindow import loginWindow
 from lib.loginDetails import loginDetails
 from lib.schoolDetails import schoolDetails
 from Event import Event
+import os 
+
 class startPage(Frame):
 
 	def __init__(self,master):
@@ -66,7 +68,15 @@ class startPage(Frame):
 		lblFacts.grid(row=3, column =3, columnspan = 4)
 
 	def frontImage(self):
-		photo = PhotoImage(file="Images/front_image.gif")
+		gifFiles = []
+		files = ([x for x in os.listdir("Images/")])
+		for file in files:
+			if file.endswith(".gif"):
+				gifFiles.append(file)
+
+		# fileName = random.choice([x.endswith(".gif") for x in )
+  #              if os.path.isfile(os.path.join("Images/", x))])
+		photo = PhotoImage(file="Images/"+random.choice(gifFiles))
 		labelLogo = Label(self,image = photo)
 		labelLogo.image=photo
 		labelLogo.grid(row=4, column=3,rowspan=2, columnspan=4 )

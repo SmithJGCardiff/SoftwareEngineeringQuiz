@@ -1,6 +1,6 @@
 #*** Imports ***
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox as tkm
 import shelve
 import os
 import sys
@@ -86,7 +86,6 @@ class View_Stats(Frame):
 		events = []
 		with shelve.open('eventslogdb') as s:
 			for key in s.keys():
-				print (key)
 				self.tEvent = s[key]
 				events.append(self.tEvent)
 
@@ -132,7 +131,6 @@ class View_Stats(Frame):
 		selected_school = self.schoolsList.get(schoolsL)
 
 		events = self.events_list.curselection()
-		print(events)
 		selected_event = self.events_list.get(events)
 		
 		self.display_event_stats(selected_school)
@@ -145,7 +143,6 @@ class View_Stats(Frame):
 		# print(event)
 
 		events = self.events_list.curselection()
-		print(events)
 		selected_event = self.events_list.get(events)
 
 
@@ -220,7 +217,7 @@ class View_Stats(Frame):
 		self.txtDisplay.insert(END, '   Event name:  ','boldfont')
 		self.txtDisplay.insert(END, ' {}'.format(table[0]) + '\n' + 186 * '-','normfont')
 		self.txtDisplay.insert(END, '    Date:  ','boldfont')
-		self.txtDisplay.insert(END, ' {}'.format(table[1]) + '\n' + 186 * '-','normfont')
+		self.txtDisplay.insert(END, ' {}'.format(self.tEvent.category) + '\n' + 186 * '-','normfont')
 					
 
 #--------------------------------------------------------------------------------------------------------------
@@ -310,11 +307,10 @@ class View_Stats(Frame):
 			myDb = self.tEvent.questions
 			for key in myDb.keys():
 				fWriter.writerow([key])
+				fWriter.writerow([("{:<40}").format("Question")]+["Correct"]+["Incorrect"]+["Skipped"]+["Unanswered"])
 				for key2 in myDb[key].keys():
-					fWriter.writerow([key2])
-					fWriter.writerow(["Correct: "+str(myDb[key][key2][0])]+["Incorrect: "+str(myDb[key][key2][1])]+["Skipped: "+str(myDb[key][key2][2])]+["Unanswered: "+str(myDb[key][key2][3])])
-		print('export stats')
-
+					fWriter.writerow([("{:<70}").format(Question.getQuestionText(key2))] +[str(myDb[key][key2][0])]+[str(myDb[key][key2][1])] +[str(myDb[key][key2][2])] +[str(myDb[key][key2][3])])
+		tkm.showinfo("Success","Report created and saved under 'Report/"+(self.tEvent.dateTime)+"' In current working directory")
 #--------------------------------------------------------------------------------------------------------------
 
 #*** Functions ***

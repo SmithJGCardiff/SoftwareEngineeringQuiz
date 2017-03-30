@@ -55,14 +55,9 @@ class Event:
 
 					questionScores = db[k].questions
 					if school in questionScores.keys():
-						print("success")
-						print(school)
-						print(questionScores.keys())
+
 						scores = questionScores[school][qID]
 					else:
-						print("Fail")
-						print(school)
-						print(questionScores.keys())
 						scores = [0,0,0,0]
 					return scores
 
