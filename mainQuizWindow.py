@@ -230,7 +230,7 @@ class mainQuizWindow(Frame):
 
 		if self.qNum < 10:
 			for i in range(self.qNum+2,11):
-				print(i)
+				print(self.listOfStuff[i-1][0])
 				Event.addQScores(self.listOfStuff[i-1][0],"unanswered",self.school)
 
 		import startPage
